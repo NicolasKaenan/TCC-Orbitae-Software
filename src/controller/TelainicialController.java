@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 
 public class TelainicialController {
     @FXML 
@@ -34,8 +35,11 @@ public class TelainicialController {
 
             stage.setTitle("Universos");
             stage.setScene(new Scene(root));
+            Image image = new Image("/assets/icon.png");
+            stage.getIcons().add(image);
             stage.show();
             Stage stagePrincipal = (Stage) btnuniversos.getScene().getWindow();
+            
             stagePrincipal.close();
             
         } catch (Exception e) {
