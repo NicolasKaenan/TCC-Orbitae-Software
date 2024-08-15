@@ -46,9 +46,11 @@
                   <Font size="23.0" />
                </font>
             </Button>
+            <Button layoutX="219.0" fx:id="btnvoltar" layoutY="120.0" mnemonicParsing="false" onAction="#btnvoltarClickAction" style="-fx-background-color: WHITE; -fx-background-radius: 15;" text="VOLTAR">
+               <font>
+                  <Font size="23.0" />
+               </font>
+            </Button>
          </children></AnchorPane>
     </content>
-    <expandableContent>
-      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="320.0" />
-    </expandableContent>
 </DialogPane>
