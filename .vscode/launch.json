@@ -4,6 +4,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "WavPlayer",
+            "request": "launch",
+            "mainClass": "controller.WavPlayer",
+            "projectName": "TCC-Orbitae_4c9925de"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"

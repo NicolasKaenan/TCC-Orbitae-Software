@@ -1,6 +1,7 @@
 import java.io.IOException;
 
 import controller.TelainicialController;
+import controller.WavPlayer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,7 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+
 public class App extends Application {
+    public WavPlayer player = new WavPlayer();
     public static void main(String[] args) {
         launch(args);
     }
@@ -16,6 +19,8 @@ public class App extends Application {
     @Override
     public void start(Stage arg0) throws Exception {
         try {
+           float volume = player.readVolumeFromFile("src\\controller\\volume.txt");
+        player.playWavFile("src\\resources\\music\\music.wav", volume);
             // Carrega o novo FXML
             Parent p = FXMLLoader.load(getClass().getResource("/view/tela-inicial.fxml"));
             Scene cena = new Scene(p);

@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,10 +15,12 @@ public class TelainicialController {
     @FXML 
     private Button btnuniversos;
     private Stage stage = new Stage();
+    public WavPlayer player = new WavPlayer();
 
     public TelainicialController() {
         
     }
+    
 
 
     public TelainicialController(Stage arg8) {
@@ -48,9 +51,23 @@ public class TelainicialController {
     }
 
     public void btnconfiguracoesClickAction(ActionEvent event) {
-        
-    }
+        try{
+        @SuppressWarnings("unused")
+            ConfiguracoesController configuracoescontroller = new ConfiguracoesController(stage);
+            // Carrega o novo FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/configuracoes.fxml"));
+            Parent root = loader.load();
 
+            stage.setTitle("configuracoes");
+            stage.setScene(new Scene(root));
+            stage.show();
+            Stage stagePrincipal = (Stage) btnuniversos.getScene().getWindow();
+            player.StopMusic();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
     public void btnsairClickAction(ActionEvent event) {
         Platform.exit();
     }
