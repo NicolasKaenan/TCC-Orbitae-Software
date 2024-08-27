@@ -4,14 +4,22 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.Window;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
+@SuppressWarnings("unused")
 public class ConfiguracoesController {
     @FXML
     private Slider sldvolume;
+
+    @FXML
+    private Button btnvoltar;
 
 
     private Stage arg08;
@@ -22,6 +30,7 @@ public class ConfiguracoesController {
 
     public ConfiguracoesController(Stage stage) {
         arg08 = stage;
+        arg08.initStyle(StageStyle.UNDECORATED);
     }
 
     public void btnsalvarClickAction(ActionEvent event){
@@ -34,6 +43,13 @@ public class ConfiguracoesController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void btnvoltarClickAction(ActionEvent event){
+        Stage stageprimario = (Stage)btnvoltar.getScene().getWindow();
+        Window owner = stageprimario.getOwner();
+
+        stageprimario.close();
 
     }
 

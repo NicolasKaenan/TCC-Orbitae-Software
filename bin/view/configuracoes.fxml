@@ -40,6 +40,6 @@
       </TabPane>
    </top>
    <bottom>
-      <Button mnemonicParsing="false" prefHeight="47.0" prefWidth="229.0" text="VOLTAR" BorderPane.alignment="CENTER" />
+      <Button fx:id="btnvoltar" mnemonicParsing="false"  onAction="#btnvoltarClickAction" prefHeight="47.0" prefWidth="229.0" text="VOLTAR" BorderPane.alignment="CENTER" />
    </bottom>
 </BorderPane>

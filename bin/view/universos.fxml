@@ -27,7 +27,17 @@
             <Font size="27.0" />
          </font>
       </Text>
-      <Button fx:id="btnuniversemaker" layoutX="461.0" layoutY="284.0" mnemonicParsing="false" onAction="#btnuniversemakerClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="CRIAR">
+      <Button layoutX="461.0" layoutY="284.0" mnemonicParsing="false" onAction="#btnuniversemakerClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="CRIAR">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Button>
+      <Button layoutX="461.0" layoutY="284.0" mnemonicParsing="false" onAction="#btnuniversemakerClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="CRIAR">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Button>
+      <Button fx:id="btnvoltar" layoutX="321.0" layoutY="284.0" mnemonicParsing="false" onAction="#btnvoltarClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="VOLTAR">
          <font>
             <Font name="System Bold" size="20.0" />
          </font>

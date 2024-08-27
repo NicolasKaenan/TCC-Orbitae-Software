@@ -46,20 +46,21 @@ public class SimulacaoController {
         grupo.translateZProperty().set(-2000);
 
         Scene cena = new Scene(grupo, WIDTH, HEIGHT, true);
-        cena.setFill(Color.BLACK);
+        cena.setFill(Color.WHITE);
 
+        
         Camera camera = new PerspectiveCamera();
         cena.setCamera(camera);
-
+        
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
         initMouseControl(grupo, cena, stage, camera);
-
+        
         AnimationTimer gravidade = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 List<Corpo> corpos2 = new ArrayList<>(corpos); // Crie uma cópia da lista corpos
-
+                
                 Iterator<Corpo> iterator = corpos2.iterator();
                 while (iterator.hasNext()) {
                     Corpo c = iterator.next();
@@ -96,11 +97,11 @@ public class SimulacaoController {
                             c.SetVelocidadeX(c.GetVelocidadeX() - (v1_c / c.getMassa()));
                             c.SetVelocidadeY(c.GetVelocidadeY() - (v2_c / c.getMassa()));
                             c.SetVelocidadeZ(c.GetVelocidadeZ() - (v3_c / c.getMassa()));
-
+                            
                             d.SetVelocidadeX(d.GetVelocidadeX() - (v1_d / d.getMassa()));
                             d.SetVelocidadeY(d.GetVelocidadeY() - (v2_d / d.getMassa()));
                             d.SetVelocidadeZ(d.GetVelocidadeZ() - (v3_d / d.getMassa()));
-
+                            
                         }
                     }
                 }
@@ -110,15 +111,15 @@ public class SimulacaoController {
         colisao.start();
         stage.setScene(cena);
         Image image = new Image("/assets/icon.png");
-            stage.getIcons().add(image);
+        stage.getIcons().add(image);
         stage.setTitle("simulação "+nome);
         stage.show();
     }
-
+    
     public SimulacaoController() {
-
+        
     }
-
+    
     private void initMouseControl(SmartGroup grupo, Scene cena, Stage arg0, Camera camera) {
         Rotate xRotate;
         Rotate yRotate;
@@ -131,6 +132,10 @@ public class SimulacaoController {
         arg0.addEventHandler(ScrollEvent.SCROLL, event -> {
             double delta = event.getDeltaY();
             camera.translateZProperty().set(camera.getTranslateZ() + delta);
+        });
+        
+        cena.setOnZoomStarted(KeyEventevent ->{
+
         });
 
         arg0.addEventHandler(KeyEvent.KEY_PRESSED, event -> {

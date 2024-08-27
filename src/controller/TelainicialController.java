@@ -8,9 +8,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 
+@SuppressWarnings("unused")
 public class TelainicialController {
     @FXML 
     private Button btnuniversos;
@@ -25,6 +26,7 @@ public class TelainicialController {
 
     public TelainicialController(Stage arg8) {
         stage = arg8;
+        arg8.initStyle(StageStyle.UNDECORATED);
     }
 
     @FXML
@@ -38,11 +40,8 @@ public class TelainicialController {
 
             stage.setTitle("Universos");
             stage.setScene(new Scene(root));
-            Image image = new Image("/assets/icon.png");
-            stage.getIcons().add(image);
             stage.show();
             Stage stagePrincipal = (Stage) btnuniversos.getScene().getWindow();
-            
             stagePrincipal.close();
             
         } catch (Exception e) {
@@ -50,9 +49,14 @@ public class TelainicialController {
         }
     }
 
+    public void Iniciar(){
+        this.stage.show();
+    }
+
     public void btnconfiguracoesClickAction(ActionEvent event) {
         try{
         @SuppressWarnings("unused")
+            
             ConfiguracoesController configuracoescontroller = new ConfiguracoesController(stage);
             // Carrega o novo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/configuracoes.fxml"));
@@ -61,8 +65,9 @@ public class TelainicialController {
             stage.setTitle("configuracoes");
             stage.setScene(new Scene(root));
             stage.show();
+            @SuppressWarnings("unused")
             Stage stagePrincipal = (Stage) btnuniversos.getScene().getWindow();
-            player.StopMusic();
+
         } catch(Exception e){
             e.printStackTrace();
         }

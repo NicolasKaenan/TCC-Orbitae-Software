@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
 public class App extends Application {
@@ -19,6 +20,7 @@ public class App extends Application {
     @Override
     public void start(Stage arg0) throws Exception {
         try {
+            arg0.initStyle(StageStyle.UNDECORATED);
            float volume = player.readVolumeFromFile("src\\controller\\volume.txt");
         player.playWavFile("src\\resources\\music\\music.wav", volume);
             // Carrega o novo FXML

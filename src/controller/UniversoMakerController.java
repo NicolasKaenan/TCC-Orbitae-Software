@@ -1,16 +1,12 @@
 package controller;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.Window;
+import javafx.stage.StageStyle;
 
 public class UniversoMakerController {
     @FXML 
@@ -29,8 +25,13 @@ public class UniversoMakerController {
 
     public UniversoMakerController(Stage arg0){
         stage = arg0;
+        stage.initStyle(StageStyle.UNDECORATED);
     }
 
+    public void btnvoltarClickAction(ActionEvent event){
+        Stage stageprimario = (Stage)btnvoltar.getScene().getWindow();
+        stageprimario.close();
+    }
 
 
     public void btncriarClickAction(ActionEvent event){
@@ -42,28 +43,11 @@ public class UniversoMakerController {
             stage.getIcons().add(image);
             stage.show();
             Stage stagePrincipal = (Stage) btncriar.getScene().getWindow();
-            stagePrincipal.close();            
+            stagePrincipal.close();
             
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void btnvoltarClickAction(ActionEvent event){
-        try {
-            @SuppressWarnings("unused")
-            UniversosController universoscontroller = new UniversosController(stage);
-            // Carrega o novo FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/universos.fxml"));
-            Parent root = loader.load();
-
-            stage.setTitle("Universos");
-            stage.setScene(new Scene(root));
-            stage.show();
-            Stage stagePrincipal = (Stage) btnvoltar.getScene().getWindow();
-            stagePrincipal.close();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-}
 }

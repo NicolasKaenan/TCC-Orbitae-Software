@@ -48,7 +48,7 @@
             </Button>
             <Button layoutX="219.0" fx:id="btnvoltar" layoutY="120.0" mnemonicParsing="false" onAction="#btnvoltarClickAction" style="-fx-background-color: WHITE; -fx-background-radius: 15;" text="VOLTAR">
                <font>
-                  <Font size="23.0" />
+                  <Font size="23.0"/>
                </font>
             </Button>
          </children></AnchorPane>
