@@ -30,7 +30,7 @@ public class ConfiguracoesController {
 
     public ConfiguracoesController(Stage stage) {
         arg08 = stage;
-        arg08.initStyle(StageStyle.UNDECORATED);
+        arg08.setResizable(false);
     }
 
     public void btnsalvarClickAction(ActionEvent event){
@@ -52,5 +52,6 @@ public class ConfiguracoesController {
         stageprimario.close();
 
     }
+
 
 }

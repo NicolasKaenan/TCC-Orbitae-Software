@@ -18,7 +18,6 @@ public class UniversosController {
     
     public UniversosController(Stage arg0) {
         stage = arg0;
-        arg0.initStyle(StageStyle.UNDECORATED);
     }
 
     public UniversosController() {
@@ -49,5 +48,9 @@ public class UniversosController {
     public void btnvoltarClickAction(ActionEvent event){
         Stage stageprimario = (Stage)btnvoltar.getScene().getWindow();
         stageprimario.close();
+    }
+
+    public void stageStyle(){
+        stage.initStyle(StageStyle.UNDECORATED);
     }
 }
