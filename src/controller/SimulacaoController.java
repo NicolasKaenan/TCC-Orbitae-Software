@@ -1,13 +1,16 @@
 package controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Camera;
+import javafx.scene.Parent;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -18,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.CullFace;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import model.Corpo;
 import model.SmartGroup;
 
@@ -36,6 +40,7 @@ public class SimulacaoController {
 
     public SimulacaoController(Stage arg0, String nome) {
         stage = arg0;
+        stage.setResizable(false);
         this.nome = nome;
     }
 
@@ -48,19 +53,18 @@ public class SimulacaoController {
         Scene cena = new Scene(grupo, WIDTH, HEIGHT, true);
         cena.setFill(Color.WHITE);
 
-        
         Camera camera = new PerspectiveCamera();
         cena.setCamera(camera);
-        
+
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
         initMouseControl(grupo, cena, stage, camera);
-        
+
         AnimationTimer gravidade = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 List<Corpo> corpos2 = new ArrayList<>(corpos); // Crie uma cópia da lista corpos
-                
+
                 Iterator<Corpo> iterator = corpos2.iterator();
                 while (iterator.hasNext()) {
                     Corpo c = iterator.next();
@@ -97,11 +101,11 @@ public class SimulacaoController {
                             c.SetVelocidadeX(c.GetVelocidadeX() - (v1_c / c.getMassa()));
                             c.SetVelocidadeY(c.GetVelocidadeY() - (v2_c / c.getMassa()));
                             c.SetVelocidadeZ(c.GetVelocidadeZ() - (v3_c / c.getMassa()));
-                            
+
                             d.SetVelocidadeX(d.GetVelocidadeX() - (v1_d / d.getMassa()));
                             d.SetVelocidadeY(d.GetVelocidadeY() - (v2_d / d.getMassa()));
                             d.SetVelocidadeZ(d.GetVelocidadeZ() - (v3_d / d.getMassa()));
-                            
+
                         }
                     }
                 }
@@ -112,18 +116,18 @@ public class SimulacaoController {
         stage.setScene(cena);
         Image image = new Image("/assets/icon.png");
         stage.getIcons().add(image);
-        stage.setTitle("simulação "+nome);
+        stage.setTitle("simulação " + nome);
         stage.show();
     }
-    
+
     public SimulacaoController() {
-        
+
     }
-    
+
     private void initMouseControl(SmartGroup grupo, Scene cena, Stage arg0, Camera camera) {
         Rotate xRotate;
         Rotate yRotate;
-        grupo.getTransforms().addAll(
+        camera.getTransforms().addAll(
                 xRotate = new Rotate(0, Rotate.X_AXIS),
                 yRotate = new Rotate(0, Rotate.Y_AXIS));
         xRotate.angleProperty().bind(angleX);
@@ -133,8 +137,8 @@ public class SimulacaoController {
             double delta = event.getDeltaY();
             camera.translateZProperty().set(camera.getTranslateZ() + delta);
         });
-        
-        cena.setOnZoomStarted(KeyEventevent ->{
+
+        cena.setOnZoomStarted(KeyEventevent -> {
 
         });
 
@@ -162,6 +166,12 @@ public class SimulacaoController {
                 anchorAngleX = angleX.get();
                 anchorAngleY = angleY.get();
             } else if (event.getButton() == MouseButton.PRIMARY) {
+                // Carrega o novo FXML
+                Stage stage = new Stage();
+                PlanetMakerController controller = new PlanetMakerController();
+                controller.setStage(stage);
+                controller.Inicar();
+
                 double mouseX = event.getX();
                 double mouseY = event.getY();
                 Corpo newC = new Corpo(1.0, "12", 100, mouseX, mouseY, camera.getTranslateZ() + 10, 0, 0, 0);
@@ -181,10 +191,14 @@ public class SimulacaoController {
         });
 
         cena.setOnMouseDragged(event -> {
-            angleX.set(anchorAngleX - (anchorY - event.getSceneY()));
-            angleY.set(anchorAngleY + (anchorX - event.getSceneX()));
+            angleX.set(anchorAngleX + (anchorY - event.getSceneY()));
+            angleY.set(anchorAngleY - (anchorX - event.getSceneX()));
         });
 
+    }
+
+    public void stageStyle() {
+        stage.initStyle(StageStyle.UNDECORATED);
     }
 
     public boolean colisao(Corpo one, Corpo two) {

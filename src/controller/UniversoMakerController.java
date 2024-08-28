@@ -25,7 +25,6 @@ public class UniversoMakerController {
 
     public UniversoMakerController(Stage arg0){
         stage = arg0;
-        stage.initStyle(StageStyle.UNDECORATED);
     }
 
     public void btnvoltarClickAction(ActionEvent event){
@@ -48,6 +47,10 @@ public class UniversoMakerController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void stageStyle(){
+        stage.initStyle(StageStyle.UNDECORATED);
     }
 
 }

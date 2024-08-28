@@ -13,16 +13,14 @@ import javafx.scene.control.Button;
 
 @SuppressWarnings("unused")
 public class TelainicialController {
-    @FXML 
+    @FXML
     private Button btnuniversos;
     private Stage stage = new Stage();
     public WavPlayer player = new WavPlayer();
 
     public TelainicialController() {
-        
-    }
-    
 
+    }
 
     public TelainicialController(Stage arg8) {
         stage = arg8;
@@ -42,21 +40,20 @@ public class TelainicialController {
             stage.setScene(new Scene(root));
             stage.show();
             Stage stagePrincipal = (Stage) btnuniversos.getScene().getWindow();
-            stagePrincipal.close();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void Iniciar(){
+    public void Iniciar() {
         this.stage.show();
     }
 
     public void btnconfiguracoesClickAction(ActionEvent event) {
-        try{
-        @SuppressWarnings("unused")
-            
+        try {
+            @SuppressWarnings("unused")
+
             ConfiguracoesController configuracoescontroller = new ConfiguracoesController(stage);
             // Carrega o novo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/configuracoes.fxml"));
@@ -68,11 +65,15 @@ public class TelainicialController {
             @SuppressWarnings("unused")
             Stage stagePrincipal = (Stage) btnuniversos.getScene().getWindow();
 
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
+    public void stageStyle() {
+        stage.initStyle(StageStyle.UNDECORATED);
+    }
+
     public void btnsairClickAction(ActionEvent event) {
         Platform.exit();
     }
