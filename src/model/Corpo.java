@@ -105,6 +105,11 @@ public class Corpo extends Sphere {
         this.velocidadeZ = velociadez;
         volume = (float)((4/3)*3.14*(raio*raio*raio));
         densidade = (float)(massa/volume);
+        
+    }
+
+    public Corpo(){
+
     }
 
     public void Colorir(String cor){
