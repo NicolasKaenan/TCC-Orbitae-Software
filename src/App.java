@@ -21,8 +21,12 @@ public class App extends Application {
     public void start(Stage arg0) throws Exception {
         try {
             arg0.initStyle(StageStyle.UNDECORATED);
-           float volume = player.readVolumeFromFile("src\\controller\\volume.txt");
-        player.playWavFile("src\\resources\\music\\music.wav", volume);
+           String volume_url = "/controller/volume.txt";
+           String musica_url = "/resources/music/music.wav";
+           
+            float volume = player.readVolumeFromFile
+           (volume_url);
+        player.playWavFile(musica_url, volume);
             // Carrega o novo FXML
             Parent p = FXMLLoader.load(getClass().getResource("/view/tela-inicial.fxml"));
             Scene cena = new Scene(p);

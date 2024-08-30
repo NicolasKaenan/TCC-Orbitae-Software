@@ -2,19 +2,7 @@
 
     "version": "0.2.0",
     "configurations": [
-        {
-            "type": "java",
-            "name": "WavPlayer",
-            "request": "launch",
-            "mainClass": "controller.WavPlayer",
-            "projectName": "TCC-Orbitae_4c9925de"
-        },
-        {
-            "type": "java",
-            "name": "Current File",
-            "request": "launch",
-            "mainClass": ""
-        },
+        
         {
             "type": "java",
             "name": "App",

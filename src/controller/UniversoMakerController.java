@@ -36,7 +36,6 @@ public class UniversoMakerController {
     public void btncriarClickAction(ActionEvent event){
         try {
             SimulacaoController simulacaoController = new SimulacaoController(stage, tfnome.getText());
-
             simulacaoController.iniciarSimulacao();
             Image image = new Image("/assets/icon.png");
             stage.getIcons().add(image);

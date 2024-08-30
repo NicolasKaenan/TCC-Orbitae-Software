@@ -58,10 +58,11 @@ public class TelainicialController {
             // Carrega o novo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/configuracoes.fxml"));
             Parent root = loader.load();
-
+            
             stage.setTitle("configuracoes");
             stage.setScene(new Scene(root));
             stage.show();
+            // configuracoescontroller.iniciarVolume();
             @SuppressWarnings("unused")
             Stage stagePrincipal = (Stage) btnuniversos.getScene().getWindow();
 

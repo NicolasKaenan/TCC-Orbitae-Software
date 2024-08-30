@@ -8,38 +8,33 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: BLACK;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UniversosController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: BLACK;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UniversosController">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="83.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
-      <ImageView fitHeight="63.0" fitWidth="61.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="125.0" fitWidth="136.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../../../Usuários/User/Downloads/Design_sem_nome__7_-removebg-preview.png" />
+            <Image url="@/assets/icon.png" />
          </image>
       </ImageView>
-      <Text fill="#f2f2f2" layoutX="90.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ORBITAE">
+      <Text fill="#f2f2f2" layoutX="178.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ORBITAE">
          <font>
-            <Font size="27.0" />
+            <Font size="72.0" />
          </font>
       </Text>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0e0e0e" height="71.0" layoutY="335.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
-      <Text fill="#f2f2f2" layoutX="14.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SEUS UNIVERSOS:">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0e0e0e" height="83.0" layoutY="517.0" stroke="BLACK" strokeType="INSIDE" width="800.0" />
+      <Text fill="#f2f2f2" layoutX="14.0" layoutY="187.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SEUS UNIVERSOS:">
          <font>
-            <Font size="27.0" />
+            <Font size="45.0" />
          </font>
       </Text>
-      <Button layoutX="461.0" layoutY="284.0" mnemonicParsing="false" onAction="#btnuniversemakerClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="CRIAR">
+      <Button layoutX="627.0" layoutY="526.0" mnemonicParsing="false" onAction="#btnuniversemakerClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="CRIAR">
          <font>
-            <Font name="System Bold" size="20.0" />
+            <Font name="System Bold" size="30.0" />
          </font>
       </Button>
-      <Button layoutX="461.0" layoutY="284.0" mnemonicParsing="false" onAction="#btnuniversemakerClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="CRIAR">
+      <Button fx:id="btnvoltar" layoutX="400.0" layoutY="526.0" mnemonicParsing="false" onAction="#btnvoltarClickAction" prefHeight="65.0" prefWidth="178.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="VOLTAR">
          <font>
-            <Font name="System Bold" size="20.0" />
-         </font>
-      </Button>
-      <Button fx:id="btnvoltar" layoutX="321.0" layoutY="284.0" mnemonicParsing="false" onAction="#btnvoltarClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="VOLTAR">
-         <font>
-            <Font name="System Bold" size="20.0" />
+            <Font name="System Bold" size="30.0" />
          </font>
       </Button>
    </children>
