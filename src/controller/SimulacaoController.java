@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
+import java.io.File;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -30,6 +30,12 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
@@ -50,11 +56,13 @@ public class SimulacaoController {
     private final int HEIGHT = 680;
     private String nome;
     private Stage stage;
+    private Color backgroundcolor;
     private double anchorX, anchorY;
     private Camera camera = new PerspectiveCamera();
     private double anchorAngleX = 0, anchorAngleY = 0;
     private final DoubleProperty angleX = new SimpleDoubleProperty(0), angleY = new SimpleDoubleProperty(0);
     private List<Corpo> corpos = new ArrayList<>();
+    private StackPane stackPane = new StackPane();
 
     @FXML
     Button btnvoltar;
@@ -70,10 +78,12 @@ public class SimulacaoController {
     Sphere sphere;
 
     
-    public SimulacaoController(Stage arg0, String nome) {
+    public SimulacaoController(Stage arg0, String nome, StackPane stackPane) {
         stage = arg0;
         stage.setResizable(false);
+        this.stackPane = stackPane;
         this.nome = nome;
+        backgroundcolor = Color.WHITE;
     }
 
     public void iniciarSimulacao() {
@@ -81,9 +91,10 @@ public class SimulacaoController {
         grupo.translateXProperty().set(WIDTH / 2);
         grupo.translateYProperty().set(HEIGHT / 2);
         grupo.translateZProperty().set(-2000);
+        
 
         Scene cena = new Scene(grupo, WIDTH, HEIGHT, true);
-        cena.setFill(Color.rgb(00, 33, 66));
+        cena.setFill(backgroundcolor);
 
         cena.setCamera(camera);
         
@@ -336,7 +347,6 @@ public class SimulacaoController {
         PhongMaterial material = new PhongMaterial();
         material.setDiffuseColor(Color.valueOf(cor));
         sphere.setMaterial(material);
-
     }
 
     public int getContador() {
@@ -483,6 +493,39 @@ public class SimulacaoController {
         String colorName = COLOR_NAMES[random.nextInt(COLOR_NAMES.length)];
         // Retorna a cor correspondente
         return colorName;
+    }
+
+    public Color getBackgroundcolor() {
+        return backgroundcolor;
+    }
+
+    public void setBackgroundcolor(Color backgroundcolor) {
+        this.backgroundcolor = backgroundcolor;
+    }
+
+    public Sphere getSphere() {
+        return sphere;
+    }
+
+    public void setSphere(Sphere sphere) {
+        this.sphere = sphere;
+    }
+
+    public static String[] getColorNames() {
+        return COLOR_NAMES;
+    }
+
+    public void setImage(File url){
+        Image bacImage =  new Image("file:"+url.getAbsolutePath());
+        BackgroundImage backgroundImage = new BackgroundImage(
+            bacImage, 
+            BackgroundRepeat.NO_REPEAT, 
+            BackgroundRepeat.NO_REPEAT, 
+            BackgroundPosition.CENTER,  
+            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+        );
+        stackPane.setBackground(new Background(backgroundImage));
+        
     }
 
 }
