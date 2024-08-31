@@ -9,7 +9,8 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="304.0" prefWidth="480.0" style="-fx-background-color: BLACK;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UniversoMakerController">
+
+<DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="315.0" prefWidth="480.0" style="-fx-background-color: BLACK;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UniversoMakerController">
     <header>
       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="33.0" prefWidth="480.0" style="-fx-background-radius: 10;">
          <children>
@@ -33,27 +34,33 @@
                   <Font size="20.0" />
                </font>
             </Text>
-            <Button fx:id="btncriar" layoutX="359.0" layoutY="200.0" mnemonicParsing="false" onAction="#btncriarClickAction" style="-fx-background-color: WHITE; -fx-background-radius: 15;" text="CRIAR">
+
+            <Button fx:id="btncriar" layoutX="357.0" layoutY="212.0" mnemonicParsing="false" onAction="#btncriarClickAction" style="-fx-background-color: WHITE; -fx-background-radius: 15;" text="CRIAR">
+
                <font>
                   <Font size="23.0" />
                </font>
             </Button>
-            <Button fx:id="btnvoltar" layoutX="232.0" layoutY="200.0" mnemonicParsing="false" onAction="#btnvoltarClickAction" style="-fx-background-color: WHITE; -fx-background-radius: 15;" text="VOLTAR">
+
+            <Button fx:id="btnvoltar" layoutX="227.0" layoutY="212.0" mnemonicParsing="false" onAction="#btnvoltarClickAction" style="-fx-background-color: WHITE; -fx-background-radius: 15;" text="VOLTAR">
+
                <font>
                   <Font size="23.0" />
                </font>
             </Button>
-            <Button fx:id="btnfilechooser" layoutX="205.0" layoutY="144.0" mnemonicParsing="false" onAction="#FileChooser" text="Imagem de fundo" />
-            <ColorPicker fx:id="cpbackground" layoutX="176.0" layoutY="83.0" />
-            <Text fill="WHITE" layoutX="19.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="COR DE FUNDO">
+
+            <Rectangle fx:id="retbackground" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="100.0" layoutX="270.0" layoutY="76.0" stroke="BLACK" strokeType="INSIDE" width="169.0" />
+            <Button fx:id="btnbakgroundimage" layoutX="135.0" layoutY="87.0" mnemonicParsing="false" onAction="#FileChooser" prefHeight="25.0" prefWidth="113.0" text="Imagem de fundo" />
+            <ColorPicker fx:id="cpbackgroundcolor" layoutX="135.0" layoutY="139.0" onAction="#Escolhercor" prefHeight="25.0" prefWidth="113.0" />
+            <Text fill="WHITE" layoutX="15.0" layoutY="108.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IMAGEM">
                <font>
-                  <Font size="20.0" />
+                  <Font size="22.0" />
                </font>
             </Text>
-            <Rectangle fx:id="retbackground" arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="97.0" layoutX="331.0" layoutY="72.0" stroke="BLACK" strokeType="INSIDE" width="121.0" />
-            <Text fill="WHITE" layoutX="14.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IMAGEM DE FUNDO">
+            <Text fill="WHITE" layoutX="36.0" layoutY="160.0" strokeType="OUTSIDE" strokeWidth="0.0" text="COR">
                <font>
-                  <Font size="20.0" />
+                  <Font size="22.0" />
+
                </font>
             </Text>
          </children></AnchorPane>
