@@ -26,3 +26,10 @@
 > As limitações do projeto será a própria linguagem que está sendo desenvolvido a aplicação; Java apresenta poucas ferramentas para manipulação 3D, e o desenvolvimento requer diversas bibliotecas.
 > As limitações do Java leva a crença de possíveis riscos, sendo eles a impossibilidade de aplicar certos requisitos na aplicação, ou a dificuldade de resolvê-los.
 
+### COMO EXECUTAR:
+> Ao fazer o donwload do projeto, localize o TCC-Orbitae.jar e abra a pasta no cmd.
+> Execute o seguinte comando no terminal:
+>  ```
+>  java --module-path endereco\da\biblioteca\javafx\javafx-sdk-21.0.2\lib --add-modules javafx.controls,javafx.fxml -jar TCC-Orbitae.jar
+>  ```
+> Após isto é só testar :)
