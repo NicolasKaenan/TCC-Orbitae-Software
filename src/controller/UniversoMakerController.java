@@ -33,8 +33,6 @@ public class UniversoMakerController {
     @FXML
     private ColorPicker cpbackgroundcolor;
 
-    private File filechooser_image;
-
     private Stage stage = new Stage();
 
     public UniversoMakerController() {
@@ -52,12 +50,8 @@ public class UniversoMakerController {
 
     public void btncriarClickAction(ActionEvent event) {
         try {
-            SimulacaoController simulacaoController = new SimulacaoController(stage, tfnome.getText(), new StackPane());
-            if (filechooser_image == null) {
-                simulacaoController.setBackgroundcolor(cpbackgroundcolor.getValue());
-            }else{
-                simulacaoController.setImage(filechooser_image);
-            }
+            SimulacaoController simulacaoController = new SimulacaoController(stage, tfnome.getText());
+            simulacaoController.setBackgroundcolor(cpbackgroundcolor.getValue());
             simulacaoController.iniciarSimulacao();
 
             Image image = new Image("/assets/icon.png");
@@ -73,13 +67,6 @@ public class UniversoMakerController {
 
     public void Escolhercor(ActionEvent event) {
         retbackground.setFill(cpbackgroundcolor.getValue());
-    }
-
-    public void FileChooser(ActionEvent event) {
-        javafx.stage.FileChooser fc = new javafx.stage.FileChooser();
-        fc.getExtensionFilters().add(new ExtensionFilter("PNG", "*.png"));
-        fc.getExtensionFilters().add(new ExtensionFilter("JPG", "*.jpg"));
-        filechooser_image = fc.showOpenDialog(null);
     }
 
     public void stageStyle() {

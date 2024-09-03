@@ -1,51 +1,34 @@
 package controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.io.File;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Camera;
-import javafx.scene.Parent;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Rotate;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Window;
+import model.Controller;
 import model.Corpo;
+import model.CorposController;
+import model.SimulacaoTimers;
 import model.SmartGroup;
 
 public class SimulacaoController {
@@ -63,6 +46,7 @@ public class SimulacaoController {
     private final DoubleProperty angleX = new SimpleDoubleProperty(0), angleY = new SimpleDoubleProperty(0);
     private List<Corpo> corpos = new ArrayList<>();
     private StackPane stackPane = new StackPane();
+    private SimulacaoTimers simulacaoTimers = new SimulacaoTimers(corpos);
 
     @FXML
     Button btnvoltar;
@@ -78,10 +62,9 @@ public class SimulacaoController {
     Sphere sphere;
 
     
-    public SimulacaoController(Stage arg0, String nome, StackPane stackPane) {
+    public SimulacaoController(Stage arg0, String nome) {
         stage = arg0;
         stage.setResizable(false);
-        this.stackPane = stackPane;
         this.nome = nome;
         backgroundcolor = Color.WHITE;
     }
@@ -100,60 +83,15 @@ public class SimulacaoController {
         
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
-        initMouseControl(grupo, cena, stage, camera);
+
+        Controller controller = new Controller();
+        controller.ControlSimulation(grupo, cena, stage, camera, corpos);
         
-        AnimationTimer gravidade = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                List<Corpo> corpos2 = new ArrayList<>(corpos); // Crie uma cópia da lista corpos
-    
-                Iterator<Corpo> iterator = corpos2.iterator();
-                while (iterator.hasNext()) {
-                    Corpo c = iterator.next();
-                    iterator.remove(); // Remove o elemento corrente usando o iterador
-                    for (Corpo d : corpos2) {
-                        atualizarPosicao(c, d);
-                        System.out.println("Distancia entre " + c.getNome() + " e " + d.getNome() + Distancia(c, d));
-                    }
-                }
-    
-            }
-        };
-        AnimationTimer colisao = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                List<Corpo> corpos2 = new ArrayList<>(corpos); // Crie uma cópia da lista corpos
-    
-                Iterator<Corpo> iterator = corpos2.iterator();
-                while (iterator.hasNext()) {
-                    Corpo c = iterator.next();
-                    iterator.remove(); // Remove o elemento corrente usando o iterador
-                    for (Corpo d : corpos2) {
-                        if (colisao(c, d)) {
-                            double v1_c = c.GetVelocidadeX() * c.getMassa() - d.GetVelocidadeX() * d.getMassa();
-                            double v2_c = c.GetVelocidadeY() * c.getMassa() - d.GetVelocidadeY() * d.getMassa();
-                            double v3_c = c.GetVelocidadeZ() * c.getMassa() - d.GetVelocidadeZ() * d.getMassa();
-    
-                            double v1_d = d.GetVelocidadeX() * d.getMassa() - c.GetVelocidadeX() * c.getMassa();
-                            double v2_d = d.GetVelocidadeY() * d.getMassa() - c.GetVelocidadeY() * c.getMassa();
-                            double v3_d = d.GetVelocidadeZ() * d.getMassa() - c.GetVelocidadeZ() * c.getMassa();
-    
-                            c.SetVelocidadeX(c.GetVelocidadeX() - (v1_c / c.getMassa()));
-                            c.SetVelocidadeY(c.GetVelocidadeY() - (v2_c / c.getMassa()));
-                            c.SetVelocidadeZ(c.GetVelocidadeZ() - (v3_c / c.getMassa()));
-    
-                            d.SetVelocidadeX(d.GetVelocidadeX() - (v1_d / d.getMassa()));
-                            d.SetVelocidadeY(d.GetVelocidadeY() - (v2_d / d.getMassa()));
-                            d.SetVelocidadeZ(d.GetVelocidadeZ() - (v3_d / d.getMassa()));
-    
-                        }
-                    }
-                }
-    
-            }
-        };
-        gravidade.start();
+        AnimationTimer colisao = simulacaoTimers.createColisaoTimer();
+        AnimationTimer gravidade = simulacaoTimers.createGravidadeTimer();
         colisao.start();
+        gravidade.start();
+
         
         stage.setScene(cena);
         Image image = new Image("/assets/icon.png");
@@ -163,92 +101,6 @@ public class SimulacaoController {
     }
 
     public SimulacaoController() {
-
-    }
-    
-    private void initMouseControl(SmartGroup grupo, Scene cena, Stage arg0, Camera camera) {
-        Rotate xRotate;
-        Rotate yRotate;
-        camera.getTransforms().addAll(
-                xRotate = new Rotate(0, Rotate.X_AXIS),
-                yRotate = new Rotate(0, Rotate.Y_AXIS));
-        xRotate.angleProperty().bind(angleX);
-        yRotate.angleProperty().bind(angleY);
-
-        arg0.addEventHandler(ScrollEvent.SCROLL, event -> {
-            double delta = event.getDeltaY();
-            camera.translateZProperty().set(camera.getTranslateZ() + delta);
-        });
-
-        cena.setOnZoomStarted(KeyEventevent -> {
-
-        });
-
-        arg0.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            System.out.println(event.getCode());
-            if (event.getCode().toString() == "A") {
-                camera.translateXProperty().set(camera.getTranslateX() - 20);
-            }
-            if (event.getCode().toString() == "D") {
-                camera.translateXProperty().set(camera.getTranslateX() + 20);
-            }
-            if (event.getCode().toString() == "W") {
-                camera.translateYProperty().set(camera.getTranslateY() - 20);
-            }
-            if (event.getCode().toString() == "S") {
-                camera.translateYProperty().set(camera.getTranslateY() + 20);
-            }
-        });
-
-        cena.setOnMousePressed(event -> {
-
-            if (event.getButton() == MouseButton.SECONDARY) {
-                anchorX = event.getX();
-                anchorY = event.getY();
-                anchorAngleX = angleX.get();
-                anchorAngleY = angleY.get();
-            } else if (event.getButton() == MouseButton.PRIMARY) {
-                // Carrega o novo FXML
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/planet-maker-dialog.fxml"));
-
-                Parent root;
-                try {
-                    root = loader.load();
-                    SimulacaoController controller = loader.getController();
-    
-                    // Configuração do diálogo
-                    Stage dialogStage = new Stage();
-                    dialogStage.setTitle("Planet Maker");
-                    dialogStage.initModality(Modality.WINDOW_MODAL);
-                    dialogStage.initOwner(stage.getOwner());
-                    dialogStage.setScene(new Scene(root));
-                    dialogStage.showAndWait();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                double mouseX = event.getX();
-                double mouseY = event.getY();
-                Corpo newC = new Corpo(1.0, "12", 100, mouseX, mouseY, camera.getTranslateZ() + 10, 0, 0, 0);
-                newC.Colorir(getRandomColor());
-                newC.setCullFace(CullFace.BACK);
-                contador += 1;
-
-                corpos.add(newC);
-
-                grupo.getChildren().add(newC);
-                System.out.println(contador);
-            }
-
-            System.out.println(camera.getTranslateZ());
-            System.out.println(camera.getTranslateZ());
-
-        });
-
-        cena.setOnMouseDragged(event -> {
-            angleX.set(anchorAngleX + (anchorY - event.getSceneY()));
-            angleY.set(anchorAngleY - (anchorX - event.getSceneX()));
-        });
 
     }
 
@@ -278,44 +130,6 @@ public class SimulacaoController {
         double x = DistanciaX(one, two);
         double y = DistanciaY(one, two);
         return Math.sqrt((x * x) + (y * y));
-    }
-
-    private void atualizarPosicao(Corpo one, Corpo two) {
-        Double forca = (one.getMassa() * two.getMassa()) * G / Distancia(one, two);
-        Double aceleracao_one = forca / one.getMassa();
-        Double aceleracao_two = forca / two.getMassa();
-
-        if (one.getTranslateX() < two.getTranslateX()) {
-            one.SetVelocidadeX(one.GetVelocidadeX() + aceleracao_one);
-            two.SetVelocidadeX(two.GetVelocidadeX() - aceleracao_two);
-        } else if (one.getTranslateX() > two.getTranslateX()) {
-            one.SetVelocidadeX(one.GetVelocidadeX() - aceleracao_one);
-            two.SetVelocidadeX(two.GetVelocidadeX() + aceleracao_two);
-        }
-
-        if (one.getTranslateY() < two.getTranslateY()) {
-            one.SetVelocidadeY(one.GetVelocidadeY() + aceleracao_one);
-            two.SetVelocidadeY(two.GetVelocidadeY() - aceleracao_two);
-        } else if (one.getTranslateY() > two.getTranslateY()) {
-            one.SetVelocidadeY(one.GetVelocidadeY() - aceleracao_one);
-            two.SetVelocidadeY(two.GetVelocidadeY() + aceleracao_two);
-        }
-
-        if (one.getTranslateZ() < two.getTranslateZ()) {
-            one.SetVelocidadeZ(one.GetVelocidadeZ() + aceleracao_one);
-            two.SetVelocidadeZ(two.GetVelocidadeZ() - aceleracao_two);
-        } else if (one.getTranslateZ() > two.getTranslateZ()) {
-            one.SetVelocidadeZ(one.GetVelocidadeZ() - aceleracao_one);
-            two.SetVelocidadeZ(two.GetVelocidadeZ() + aceleracao_two);
-        }
-
-        one.setTranslateX(one.getTranslateX() + one.GetVelocidadeX());
-        one.setTranslateZ(one.getTranslateZ() + one.GetVelocidadeZ());
-        one.setTranslateY(one.getTranslateY() + one.GetVelocidadeY());
-        two.setTranslateX(two.getTranslateX() + two.GetVelocidadeX());
-        two.setTranslateZ(two.getTranslateZ() + two.GetVelocidadeZ());
-        two.setTranslateY(two.getTranslateY() + two.GetVelocidadeY());
-
     }
 
     public void btncriarClickAction(ActionEvent event) {
@@ -514,18 +328,4 @@ public class SimulacaoController {
     public static String[] getColorNames() {
         return COLOR_NAMES;
     }
-
-    public void setImage(File url){
-        Image bacImage =  new Image("file:"+url.getAbsolutePath());
-        BackgroundImage backgroundImage = new BackgroundImage(
-            bacImage, 
-            BackgroundRepeat.NO_REPEAT, 
-            BackgroundRepeat.NO_REPEAT, 
-            BackgroundPosition.CENTER,  
-            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
-        );
-        stackPane.setBackground(new Background(backgroundImage));
-        
-    }
-
 }
