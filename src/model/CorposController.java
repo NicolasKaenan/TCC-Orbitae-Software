@@ -1,7 +1,7 @@
 package model;
 
 public class CorposController {
-    public static final double G = 120e-2;
+    public static final double G = 12e-2;
     public void atualizarPosicao(Corpo one, Corpo two) {
         Double forca = (one.getMassa() * two.getMassa()) * G / Distancia(one, two);
         Double aceleracao_one = forca / one.getMassa();

@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.shape.CullFace;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -88,14 +87,14 @@ public class Controller {
                 }
                 double mouseX = event.getX();
                 double mouseY = event.getY();
-                Corpo newC = new Corpo(1.0, "12", 100, mouseX, mouseY, camera.getTranslateZ() + 10, 0, 0, 0);
+                // Corpo newC = new Corpo(1.0, "12", 100, mouseX, mouseY, camera.getTranslateZ() + 10, 0, 0, 0);
                 // newC.Colorir(getRandomColor());
-                newC.setCullFace(CullFace.BACK);
+                // newC.setCullFace(CullFace.BACK);
                 contador += 1;
 
-                corpos.add(newC);
+                // corpos.add(newC);
 
-                grupo.getChildren().add(newC);
+                // grupo.getChildren().add(newC);
                 System.out.println(contador);
             }
 
