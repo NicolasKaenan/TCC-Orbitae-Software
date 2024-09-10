@@ -1,7 +1,5 @@
 package controller;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import javafx.animation.AnimationTimer;
@@ -19,15 +17,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Sphere;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Controller;
 import model.Corpo;
-import model.CorposController;
 import model.SimulacaoTimers;
 import model.SmartGroup;
 
@@ -45,7 +42,7 @@ public class SimulacaoController {
     private double anchorAngleX = 0, anchorAngleY = 0;
     private final DoubleProperty angleX = new SimpleDoubleProperty(0), angleY = new SimpleDoubleProperty(0);
     private List<Corpo> corpos = new ArrayList<>();
-    private StackPane stackPane = new StackPane();
+    private SmartGroup grupo = new SmartGroup();
     private SimulacaoTimers simulacaoTimers = new SimulacaoTimers(corpos);
 
     @FXML
@@ -70,7 +67,6 @@ public class SimulacaoController {
     }
 
     public void iniciarSimulacao() {
-        SmartGroup grupo = new SmartGroup();
         grupo.translateXProperty().set(WIDTH / 2);
         grupo.translateYProperty().set(HEIGHT / 2);
         grupo.translateZProperty().set(-2000);
@@ -116,22 +112,6 @@ public class SimulacaoController {
         return one_borda.intersects(two_borda);
     }
 
-    private double DistanciaX(Corpo one, Corpo two) {
-        double distancia = one.getTranslateX() - two.getTranslateX();
-        return distancia;
-    }
-
-    private double DistanciaY(Corpo one, Corpo two) {
-        double distancia = one.getTranslateY() - two.getTranslateY();
-        return distancia;
-    }
-
-    private double Distancia(Corpo one, Corpo two) {
-        double x = DistanciaX(one, two);
-        double y = DistanciaY(one, two);
-        return Math.sqrt((x * x) + (y * y));
-    }
-
     public void btncriarClickAction(ActionEvent event) {
         if (tfnome.getText().isEmpty() || tfmassa.getText().isEmpty() || tfraio.getText().isEmpty()) {
             Alert alert = new Alert(AlertType.INFORMATION);
@@ -146,6 +126,14 @@ public class SimulacaoController {
         Double massa = Double.valueOf(tfmassa.getText());
         int raio = Integer.valueOf(tfraio.getText());
         String cor = cpcor.getValue().toString();
+
+        Corpo corpon = new Corpo(massa,nome,raio, 0, 0 ,0, 0,0,0);
+
+        corpon.Colorir(cor);
+
+        corpos.add(corpon);
+        corpon.setCullFace(CullFace.BACK);
+        grupo.getChildren().add(corpon);
 
         Stage stageAtual = (Stage) btnvoltar.getScene().getWindow();
         stageAtual.close();

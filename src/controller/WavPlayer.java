@@ -1,18 +1,13 @@
 package controller;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.Scanner;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import javax.sound.sampled.FloatControl;
 
@@ -63,17 +58,16 @@ public class WavPlayer {
     }
 
     public float readVolumeFromFile(String filePath) {
-        float volume = 150.0f; // Valor padrão de volume
-        InputStream in = getClass().getResourceAsStream(filePath);
-        BufferedReader input = new BufferedReader(new InputStreamReader(in));
+        float text = 0.0f;
 
-        try {
-            volume = Float.valueOf(input.readLine());
-        } catch (NumberFormatException | IOException e) {
+        try (BufferedReader leitorFiler = new BufferedReader(new FileReader(filePath))) {
+            text = Float.valueOf(leitorFiler.readLine());
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return volume;
+        return text;
     }
+
 
     public void StopMusic() {
         clip.stop();

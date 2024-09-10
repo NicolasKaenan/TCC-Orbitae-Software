@@ -1,8 +1,5 @@
 package model;
-
 import javafx.animation.AnimationTimer;
-import model.Corpo;
-import model.CorposController;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +24,7 @@ public class SimulacaoTimers {
                     Corpo c = iterator.next();
                     iterator.remove();
                     for (Corpo d : corpos2) {
-                        corposController.atualizarPosicao(c, d);
+                        corposController.atualizarPosicao(d, c);
                         System.out.println("Distancia entre " + c.getNome() + " e " + d.getNome() + Distancia(c, d));
                     }
                 }
