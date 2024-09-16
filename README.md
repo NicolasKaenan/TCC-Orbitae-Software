@@ -27,9 +27,16 @@
 > As limitações do Java leva a crença de possíveis riscos, sendo eles a impossibilidade de aplicar certos requisitos na aplicação, ou a dificuldade de resolvê-los.
 
 ### COMO EXECUTAR:
-> Ao fazer o donwload do projeto, localize o TCC-Orbitae.jar e abra a pasta no cmd.
+> Ao fazer o donwload do projeto, localize o TCC-Orbitae.jar.
+> Passe o para uma pasta que contenha outra pasta chamada config.
+> Na pasta config crie dois arquivos de texto, login e volume.
+> Abra a pasta no cmd.
 > Execute o seguinte comando no terminal:
 >  ```
 >  java --module-path endereco\da\biblioteca\javafx\javafx-sdk-21.0.2\lib --add-modules javafx.controls,javafx.fxml -jar TCC-Orbitae.jar
 >  ```
+>  O software tem uma API RESTful para salvar o cookie retornado do login, por enquanto o [site](https://github.com/NicolasKaenan/TCC-Orbitae-Site) não foi finalizado, então para testar primeiro envie essa requisição HTTP.
+> ```
+>  http://localhost:8080/auth/retorno-login?nomealeatorio
+> ```
 > Após isto é só testar :)
