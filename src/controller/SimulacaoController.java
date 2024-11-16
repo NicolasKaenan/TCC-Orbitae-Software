@@ -1,7 +1,12 @@
 package controller;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -25,16 +30,18 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Controller;
 import model.Corpo;
+import model.SendJsonAPI;
+import model.Simulacao;
 import model.SimulacaoTimers;
 import model.SmartGroup;
 
 public class SimulacaoController {
     private int contador = 0;
-    // private static final double G = 6.67430e-2;
     private static final double G = 120e-2;
     private final int WIDTH = 1350;
     private final int HEIGHT = 680;
     private String nome;
+    static String filepath;
     private Stage stage;
     private Color backgroundcolor;
     private double anchorX, anchorY;
@@ -58,7 +65,6 @@ public class SimulacaoController {
     @FXML
     Sphere sphere;
 
-    
     public SimulacaoController(Stage arg0, String nome) {
         stage = arg0;
         stage.setResizable(false);
@@ -67,28 +73,47 @@ public class SimulacaoController {
     }
 
     public void iniciarSimulacao() {
+        try {
+            String caminhoatual = System.getProperty("user.dir");
+            String filelogin = caminhoatual + File.separator + "config" + File.separator + "login.txt";
+            String texto = readFromFile(filelogin);
+            Simulacao simulacao = new Simulacao(nome, backgroundcolor.toString(), texto);
+            SendJsonAPI sendJsonAPI = new SendJsonAPI();
+            System.out.println(simulacao.CreateJson());
+
+            URI uri = new URI("http://localhost:3000/simulation");
+            sendJsonAPI.sendJson(simulacao.CreateJson(), uri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Corpo corpo1 = new Corpo(20.0, "1", 20, camera.getTranslateX(), camera.getTranslateY(), camera.getTranslateZ(),
+                0, 0, 0);
+        Corpo corpo2 = new Corpo(20.0, "2", 20, camera.getTranslateX() + 100, camera.getTranslateY(),
+                camera.getTranslateZ(), 0, 0, 0);
+        corpos.add(corpo1);
+        corpos.add(corpo2);
+        grupo.getChildren().addAll(corpos);
         grupo.translateXProperty().set(WIDTH / 2);
         grupo.translateYProperty().set(HEIGHT / 2);
         grupo.translateZProperty().set(-2000);
-        
 
         Scene cena = new Scene(grupo, WIDTH, HEIGHT, true);
         cena.setFill(backgroundcolor);
 
         cena.setCamera(camera);
-        
+
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
 
         Controller controller = new Controller();
         controller.ControlSimulation(grupo, cena, stage, camera, corpos);
-        
-        AnimationTimer colisao = simulacaoTimers.createColisaoTimer();
-        AnimationTimer gravidade = simulacaoTimers.createGravidadeTimer();
-        colisao.start();
-        gravidade.start();
 
-        
+        AnimationTimer gravidade = simulacaoTimers.createGravidadeTimer();
+        AnimationTimer colisao = simulacaoTimers.createColisaoTimer();
+
+        gravidade.start();
+        colisao.start();
+
         stage.setScene(cena);
         Image image = new Image("/assets/icon.png");
         stage.getIcons().add(image);
@@ -98,6 +123,18 @@ public class SimulacaoController {
 
     public SimulacaoController() {
 
+    }
+
+    public String readFromFile(String filePath) {
+        String text = null;
+
+        try (BufferedReader leitorFiler = new BufferedReader(new FileReader(filePath))) {
+            text = leitorFiler.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return text;
     }
 
     public void stageStyle() {
@@ -121,13 +158,15 @@ public class SimulacaoController {
             alert.showAndWait();
             return;
         }
-
+        // Aqui ta o problema
         String nome = tfnome.getText();
         Double massa = Double.valueOf(tfmassa.getText());
         int raio = Integer.valueOf(tfraio.getText());
         String cor = cpcor.getValue().toString();
 
-        Corpo corpon = new Corpo(massa,nome,raio, 0, 0 ,0, 0,0,0);
+        // Onde eu crio o novo corpo com as especificações do usuário
+        Corpo corpon = new Corpo(massa, nome, raio, camera.getTranslateX(), camera.getTranslateY(),
+                camera.getTranslateZ(), 0, 0, 0);
 
         corpon.Colorir(cor);
 
@@ -235,7 +274,6 @@ public class SimulacaoController {
         return angleY;
     }
 
-
     public Camera getCamera() {
         return camera;
     }
@@ -283,19 +321,6 @@ public class SimulacaoController {
     public void setCpcor(ColorPicker cpcor) {
         this.cpcor = cpcor;
     }
-    // Array com alguns nomes de cores em inglês
-    private static final String[] COLOR_NAMES = {
-            "RED", "GREEN", "BLUE", "YELLOW", "CYAN", "MAGENTA", "ORANGE", "PINK", "GRAY", "DARKGRAY"
-    };
-
-    // Função para obter uma cor aleatória
-    public static String getRandomColor() {
-        Random random = new Random();
-        // Escolha um nome de cor aleatório
-        String colorName = COLOR_NAMES[random.nextInt(COLOR_NAMES.length)];
-        // Retorna a cor correspondente
-        return colorName;
-    }
 
     public Color getBackgroundcolor() {
         return backgroundcolor;
@@ -311,9 +336,5 @@ public class SimulacaoController {
 
     public void setSphere(Sphere sphere) {
         this.sphere = sphere;
-    }
-
-    public static String[] getColorNames() {
-        return COLOR_NAMES;
     }
 }

@@ -1,5 +1,6 @@
 package model;
 
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
@@ -19,11 +20,9 @@ public class Controller {
     private final DoubleProperty angleX = new SimpleDoubleProperty(0), angleY = new SimpleDoubleProperty(0);
     private double anchorX, anchorY;
     private double anchorAngleX = 0, anchorAngleY = 0;
-    private int contador = 0;
 
+    public Controller() {
 
-    public Controller(){
-        
     }
 
     public void ControlSimulation(SmartGroup grupo, Scene cena, Stage arg0, Camera camera, List<Corpo> corpos) {
@@ -68,34 +67,22 @@ public class Controller {
                 anchorAngleX = angleX.get();
                 anchorAngleY = angleY.get();
             } else if (event.getButton() == MouseButton.PRIMARY) {
-                // Carrega o novo FXML
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/planet-maker-dialog.fxml"));
-
-                Parent root;
-                try {
-                    root = loader.load();
-                    // Configuração do diálogo
-                    Stage dialogStage = new Stage();
-                    dialogStage.setTitle("Planet Maker");
-                    dialogStage.initModality(Modality.WINDOW_MODAL);
-                    dialogStage.initOwner(arg0.getOwner());
-                    dialogStage.setScene(new Scene(root));
-                    dialogStage.showAndWait();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                double mouseX = event.getX();
-                double mouseY = event.getY();
-                // Corpo newC = new Corpo(1.0, "12", 100, mouseX, mouseY, camera.getTranslateZ() + 10, 0, 0, 0);
-                // newC.Colorir(getRandomColor());
-                // newC.setCullFace(CullFace.BACK);
-                contador += 1;
-
-                // corpos.add(newC);
-
-                // grupo.getChildren().add(newC);
-                System.out.println(contador);
+                
+                Platform.runLater(() -> {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/planet-maker-dialog.fxml"));
+                    Parent root;
+                    try {
+                        root = loader.load();
+                        Stage dialogStage = new Stage();
+                        dialogStage.setTitle("Planet Maker");
+                        dialogStage.initModality(Modality.WINDOW_MODAL);
+                        dialogStage.initOwner(arg0.getOwner());
+                        dialogStage.setScene(new Scene(root));
+                        dialogStage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
             }
 
             System.out.println(camera.getTranslateZ());
