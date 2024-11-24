@@ -25,7 +25,7 @@ public class SimulacaoTimers {
                     iterator.remove();
                     for (Corpo d : corpos2) {
                         corposController.atualizarPosicao(d, c);
-                        System.out.println("Distancia entre " + c.getNome() + " e " + d.getNome() + Distancia(c, d));
+                        System.out.println("Distancia entre " + c.getNome() + " e " + d.getNome() + " "+ Distancia(c, d));
                     }
                 }
             }
@@ -37,35 +37,55 @@ public class SimulacaoTimers {
             @Override
             public void handle(long now) {
                 List<Corpo> corpos2 = new ArrayList<>(corpos);
-    
+        
                 Iterator<Corpo> iterator = corpos2.iterator();
                 while (iterator.hasNext()) {
                     Corpo c = iterator.next();
                     iterator.remove();
                     for (Corpo d : corpos2) {
                         if (colisao(c, d)) {
-                            double v1_c = c.GetVelocidadeX() * c.getMassa() - d.GetVelocidadeX() * d.getMassa();
-                            double v2_c = c.GetVelocidadeY() * c.getMassa() - d.GetVelocidadeY() * d.getMassa();
-                            double v3_c = c.GetVelocidadeZ() * c.getMassa() - d.GetVelocidadeZ() * d.getMassa();
+                            // Vetor da diferença de posição entre os corpos c e d
+                            double dx = c.getTranslateX() - d.getTranslateX();
+                            double dy = c.getTranslateY() - d.getTranslateY();
+                            double dz = c.getTranslateZ() - d.getTranslateZ();
+                            
+                            // Distância ao quadrado entre os corpos c e d
+                            double dist2 = dx * dx + dy * dy + dz * dz;
     
-                            double v1_d = d.GetVelocidadeX() * d.getMassa() - c.GetVelocidadeX() * c.getMassa();
-                            double v2_d = d.GetVelocidadeY() * d.getMassa() - c.GetVelocidadeY() * c.getMassa();
-                            double v3_d = d.GetVelocidadeZ() * d.getMassa() - c.GetVelocidadeZ() * c.getMassa();
+                            // Produto escalar da diferença de velocidade
+                            double dvx = c.GetVelocidadeX() - d.GetVelocidadeX();
+                            double dvy = c.GetVelocidadeY() - d.GetVelocidadeY();
+                            double dvz = c.GetVelocidadeZ() - d.GetVelocidadeZ();
+                            
+                            double dvDotDx = dvx * dx + dvy * dy + dvz * dz; // Produto escalar das velocidades
     
-                            c.SetVelocidadeX(c.GetVelocidadeX() - (v1_c / c.getMassa()));
-                            c.SetVelocidadeY(c.GetVelocidadeY() - (v2_c / c.getMassa()));
-                            c.SetVelocidadeZ(c.GetVelocidadeZ() - (v3_c / c.getMassa()));
+                            // Massas dos corpos
+                            double m1 = c.getMassa();
+                            double m2 = d.getMassa();
     
-                            d.SetVelocidadeX(d.GetVelocidadeX() - (v1_d / d.getMassa()));
-                            d.SetVelocidadeY(d.GetVelocidadeY() - (v2_d / d.getMassa()));
-                            d.SetVelocidadeZ(d.GetVelocidadeZ() - (v3_d / d.getMassa()));
+                            // Fórmula da colisão elástica
+                            double fator = 2 * m2 / (m1 + m2) * (dvDotDx / dist2);
     
+                            // Atualiza as velocidades de c
+                            c.SetVelocidadeX(c.GetVelocidadeX() - fator * dx);
+                            c.SetVelocidadeY(c.GetVelocidadeY() - fator * dy);
+                            c.SetVelocidadeZ(c.GetVelocidadeZ() - fator * dz);
+    
+                            // Atualiza as velocidades de d (simetria)
+                            fator = 2 * m1 / (m1 + m2) * (dvDotDx / dist2);
+                            d.SetVelocidadeX(d.GetVelocidadeX() + fator * dx);
+                            d.SetVelocidadeY(d.GetVelocidadeY() + fator * dy);
+                            d.SetVelocidadeZ(d.GetVelocidadeZ() + fator * dz);
+
+                            c.getRelatorio().somarQuantidadeColisoes();
+                            d.getRelatorio().somarQuantidadeColisoes();
                         }
                     }
                 }
             }
         };
     }
+    
 
     private double Distancia(Corpo one, Corpo two) {
         double x = one.getTranslateX() - two.getTranslateX();
@@ -74,7 +94,15 @@ public class SimulacaoTimers {
     }
 
     private boolean colisao(Corpo one, Corpo two) {
-        return one.getBoundsInParent().intersects(two.getBoundsInParent());
+        double dx = one.getTranslateX() - two.getTranslateX();
+        double dy = one.getTranslateY() - two.getTranslateY();
+        double dz = one.getTranslateZ() - two.getTranslateZ();
+        
+        double distancia = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        double somaRaios = one.getRaio() + two.getRaio(); // Supondo que os corpos têm um método getRaio()
+        
+        return distancia < somaRaios;
     }
+    
 }
 

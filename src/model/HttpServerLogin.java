@@ -13,29 +13,24 @@ import java.io.FileWriter;
 
 public class HttpServerLogin {
     private CountDownLatch latch;
-    private static String filepath;
+    static String filepath;
 
-    // Construtor padrão
     public HttpServerLogin() {
     }
 
-    // Construtor que recebe o CountDownLatch
     public HttpServerLogin(CountDownLatch latch) {
         this.latch = latch;
     }
 
-    // Criação do servidor HTTP
     public HttpServer CreateSimpleHttpServer() throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/auth/retorno-login", new AuthHandler(latch));
         return server;
     }
 
-    // Handler responsável por tratar as requisições HTTP
     static class AuthHandler implements HttpHandler {
         private CountDownLatch latch;
 
-        // Construtor que recebe o CountDownLatch
         public AuthHandler(CountDownLatch latch) {
             this.latch = latch;
         }
@@ -44,18 +39,17 @@ public class HttpServerLogin {
         public void handle(HttpExchange exchange) throws IOException {
             if ("GET".equals(exchange.getRequestMethod())) {
                 String query = exchange.getRequestURI().getQuery();
-                System.out.println("Query recebida: " + query);
+                System.out.println("Login cookie recebido: " + query);
 
                 WriteLoginFromFile(query, filepath);
 
-                // Resposta para o cliente
                 String response = "Token recebido com sucesso!";
                 exchange.sendResponseHeaders(200, response.length());
                 OutputStream os = exchange.getResponseBody();
                 os.write(response.getBytes());
                 os.close();
 
-                // Libera o CountDownLatch para continuar o fluxo principal
+
                 latch.countDown();
             } else {
                 String response = "Método não suportado!";
@@ -69,7 +63,7 @@ public class HttpServerLogin {
 
     // Método para ler o login de um arquivo
     public String readLoginFromFile(String filePath) {
-        this.filepath = filePath;
+        HttpServerLogin.filepath = filePath;
         String text = null;
 
         try (BufferedReader leitorFiler = new BufferedReader(new FileReader(filePath))) {

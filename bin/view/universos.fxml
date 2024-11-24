@@ -7,6 +7,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.FlowPane?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: BLACK;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UniversosController">
    <children>
@@ -27,6 +28,10 @@
             <Font size="45.0" />
          </font>
       </Text>
+      <FlowPane fx:id="FlowUniversos" hgap="10" vgap="10" layoutX="50" layoutY="270.0" prefWidth="800" prefHeight="200">
+      </FlowPane>
+      
+      
       <Button layoutX="627.0" layoutY="526.0" mnemonicParsing="false" onAction="#btnuniversemakerClickAction" prefHeight="44.0" prefWidth="129.0" style="-fx-background-radius: 15; -fx-background-color: WHITE;" text="CRIAR">
          <font>
             <Font name="System Bold" size="30.0" />

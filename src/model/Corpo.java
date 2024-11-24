@@ -1,13 +1,16 @@
 package model;
+
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 
 public class Corpo extends Sphere {
+    private int id;
     private Double massa;
     private double x;
     private double y;
+    private double Z;
     private double densidade;
     private double volume;
     private String nome;
@@ -16,8 +19,9 @@ public class Corpo extends Sphere {
     private double velocidadeY;
     private double velocidadeZ;
     private PhongMaterial material = new PhongMaterial();
- 
-    
+    private String cor;
+    private Relatorio relatorio;
+
     public Double getMassa() {
         return massa;
     }
@@ -62,19 +66,19 @@ public class Corpo extends Sphere {
         return nome;
     }
 
-    public double GetVelocidadeX(){
+    public double GetVelocidadeX() {
         return velocidadeX;
     }
 
-    public double GetVelocidadeY(){
+    public double GetVelocidadeY() {
         return velocidadeY;
     }
 
-    public void SetVelocidadeX(double velocidadex){
+    public void SetVelocidadeX(double velocidadex) {
         this.velocidadeX = velocidadex;
     }
 
-    public void SetVelocidadeY(double velocidadey){
+    public void SetVelocidadeY(double velocidadey) {
         this.velocidadeY = velocidadey;
     }
 
@@ -90,11 +94,15 @@ public class Corpo extends Sphere {
         this.raio = raio;
     }
 
-    public Corpo(Double massa, String nome, double raio, double x, double y, double z, double velocidadex, double velociadey, double velociadez){
+    
+
+    public Corpo(Double massa, String nome, double raio, double x, double y, double z, double velocidadex,
+            double velociadey, double velociadez) {
         this.x = x;
         this.setTranslateX(x);
         this.y = y;
         this.setTranslateY(y);
+        this.Z = z;
         this.setTranslateZ(z);
         this.massa = massa;
         this.nome = nome;
@@ -103,21 +111,40 @@ public class Corpo extends Sphere {
         this.velocidadeX = velocidadex;
         this.velocidadeY = velociadey;
         this.velocidadeZ = velociadez;
-        volume = (float)((4/3)*3.14*(raio*raio*raio));
-        densidade = (float)(massa/volume);
-        
+        volume = (float) ((4 / 3) * 3.14 * (raio * raio * raio));
+        densidade = (float) (massa / volume);
+        id = -1;
+        this.relatorio = new Relatorio(this);
     }
 
-    public Corpo(){
+    public Corpo() {
 
     }
 
-    public void Colorir(String cor){
+    public void Colorir(String cor) {
         PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(Color.valueOf(cor));
+        if (cor == null) {
+            material.setDiffuseColor(Color.WHITE);
+            this.cor = Color.WHITE.toString();
+        } else {
+            material.setDiffuseColor(Color.valueOf(cor));
+            this.cor = Color.valueOf(cor).toString();
+        }
         this.setMaterial(material);
     }
 
+    public void ColorirCorSalva(String corSalva) {
+        try {
+            System.out.println(corSalva);
+            Color color = Color.web(corSalva); 
+            PhongMaterial material = new PhongMaterial();
+            material.setDiffuseColor(color);
+            this.setMaterial(material); 
+        } catch (IllegalArgumentException e) {
+            System.out.println("Formato de cor inválido: " + corSalva);
+        }
+    }
+    
     public void setX(double x) {
         this.x = x;
     }
@@ -126,11 +153,19 @@ public class Corpo extends Sphere {
         this.y = y;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int GetId() {
+        return id;
+    }
+
     public double GetVelocidadeZ() {
         return velocidadeZ;
     }
 
-    public void Texturizar(String local){
+    public void Texturizar(String local) {
         material.setDiffuseMap(new Image(getClass().getResourceAsStream(local)));
         this.setMaterial(material);
     }
@@ -138,5 +173,57 @@ public class Corpo extends Sphere {
     public void SetVelocidadeZ(double velocidadeZ) {
         this.velocidadeZ = velocidadeZ;
     }
-}
 
+    public double getZ() {
+        return Z;
+    }
+
+    public void setZ(double z) {
+        Z = z;
+    }
+
+    public double getVelocidadeX() {
+        return velocidadeX;
+    }
+
+    public void setVelocidadeX(double velocidadeX) {
+        this.velocidadeX = velocidadeX;
+    }
+
+    public double getVelocidadeY() {
+        return velocidadeY;
+    }
+
+    public void setVelocidadeY(double velocidadeY) {
+        this.velocidadeY = velocidadeY;
+    }
+
+    public double getVelocidadeZ() {
+        return velocidadeZ;
+    }
+
+    public void setVelocidadeZ(double velocidadeZ) {
+        this.velocidadeZ = velocidadeZ;
+    }
+
+    public void setMaterial(PhongMaterial material) {
+        this.material = material;
+    }
+
+    public String getCor() {
+        return cor;
+    }
+
+    public void setCor(String cor) {
+        this.cor = cor;
+    }
+
+
+    public Relatorio getRelatorio() {
+        return relatorio;
+    }
+
+    public void setRelatorio(Relatorio relatorio) {
+        this.relatorio = relatorio;
+    }
+}
