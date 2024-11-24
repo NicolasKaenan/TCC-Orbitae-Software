@@ -3,6 +3,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SimulacaoApp",
+            "request": "launch",
+            "mainClass": "test.SimulacaoApp",
+            "projectName": "TCC-Orbitae_4c9925de"
+        },
+        {
+            "type": "java",
+            "name": "simulacao",
+            "request": "launch",
+            "mainClass": "test.simulacao",
+            "projectName": "TCC-Orbitae_4c9925de"
+        },
+        {
+            "type": "java",
             "name": "App",
             "request": "launch",
             "mainClass": "App",

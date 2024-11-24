@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Camera;
@@ -24,10 +26,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.CullFace;
 import javafx.scene.shape.Sphere;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import model.Controller;
 import model.Corpo;
 import model.SendJsonAPI;
@@ -36,21 +38,27 @@ import model.SimulacaoTimers;
 import model.SmartGroup;
 
 public class SimulacaoController {
+
     private int contador = 0;
     private static final double G = 120e-2;
     private final int WIDTH = 1350;
     private final int HEIGHT = 680;
     private String nome;
     static String filepath;
-    private Stage stage;
+    private static Stage stage;
     private Color backgroundcolor;
     private double anchorX, anchorY;
     private Camera camera = new PerspectiveCamera();
     private double anchorAngleX = 0, anchorAngleY = 0;
     private final DoubleProperty angleX = new SimpleDoubleProperty(0), angleY = new SimpleDoubleProperty(0);
-    private List<Corpo> corpos = new ArrayList<>();
-    private SmartGroup grupo = new SmartGroup();
-    private SimulacaoTimers simulacaoTimers = new SimulacaoTimers(corpos);
+    private static List<Corpo> corpos = new ArrayList<>();
+    private static SmartGroup grupo = new SmartGroup();
+    private static SimulacaoTimers simulacaoTimers = new SimulacaoTimers(corpos);
+    private AnimationTimer colisao = simulacaoTimers.createColisaoTimer();
+    private AnimationTimer gravidade = simulacaoTimers.createGravidadeTimer();
+    private Controller controller = new Controller();
+    private static Simulacao simulacao = new Simulacao();
+    private Scene cena = new Scene(grupo, WIDTH, HEIGHT, true);
 
     @FXML
     Button btnvoltar;
@@ -77,27 +85,56 @@ public class SimulacaoController {
             String caminhoatual = System.getProperty("user.dir");
             String filelogin = caminhoatual + File.separator + "config" + File.separator + "login.txt";
             String texto = readFromFile(filelogin);
-            Simulacao simulacao = new Simulacao(nome, backgroundcolor.toString(), texto);
+            simulacao = new Simulacao(nome, backgroundcolor.toString(), texto);
             SendJsonAPI sendJsonAPI = new SendJsonAPI();
             System.out.println(simulacao.CreateJson());
 
             URI uri = new URI("http://localhost:3000/simulation");
-            sendJsonAPI.sendJson(simulacao.CreateJson(), uri);
+            int resposta = sendJsonAPI.sendJson(simulacao.CreateJson(), uri);
+            simulacao.setId(resposta);
+            System.out.println(resposta);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    URI uricorpos;
+                    try {
+                        uricorpos = new URI("http://localhost:3000/corpos/" + simulacao.getId());
+                        sendJsonAPI.sendCorpos(corpos, uricorpos);
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                    gravidade.stop();
+                    cena.setRoot(new SmartGroup());
+                    colisao.stop();
+                    corpos.clear();
+                    grupo.getChildren().clear();
+                    System.err.println("acabou a simulação");
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Corpo corpo1 = new Corpo(20.0, "1", 20, camera.getTranslateX(), camera.getTranslateY(), camera.getTranslateZ(),
+        Corpo corpo1 = new Corpo(2000.0, "Sol", 200, camera.getTranslateX() - 60, camera.getTranslateY(),
+                camera.getTranslateZ() + 644,
                 0, 0, 0);
-        Corpo corpo2 = new Corpo(20.0, "2", 20, camera.getTranslateX() + 100, camera.getTranslateY(),
-                camera.getTranslateZ(), 0, 0, 0);
+        Corpo corpo2 = new Corpo(500.0, "jupiter", 100, camera.getTranslateX() + 200, camera.getTranslateY() + 600,
+                camera.getTranslateZ(),
+                0, 0, 0);
+        Corpo corpo3 = new Corpo(200.0, "terra", 50, camera.getTranslateX() - 800, camera.getTranslateY() - 900,
+                camera.getTranslateZ() - 900,
+                0, 0, 0);
+
+        corpo1.Colorir("WHITE");
+        corpo2.Colorir("RED");
+        corpo3.Colorir("BLUE");
         corpos.add(corpo1);
         corpos.add(corpo2);
+        corpos.add(corpo3);
         grupo.getChildren().addAll(corpos);
         grupo.translateXProperty().set(WIDTH / 2);
         grupo.translateYProperty().set(HEIGHT / 2);
         grupo.translateZProperty().set(-2000);
 
-        Scene cena = new Scene(grupo, WIDTH, HEIGHT, true);
         cena.setFill(backgroundcolor);
 
         cena.setCamera(camera);
@@ -105,20 +142,48 @@ public class SimulacaoController {
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
 
-        Controller controller = new Controller();
         controller.ControlSimulation(grupo, cena, stage, camera, corpos);
 
-        AnimationTimer gravidade = simulacaoTimers.createGravidadeTimer();
-        AnimationTimer colisao = simulacaoTimers.createColisaoTimer();
-
-        gravidade.start();
         colisao.start();
+        gravidade.start();
 
         stage.setScene(cena);
         Image image = new Image("/assets/icon.png");
         stage.getIcons().add(image);
         stage.setTitle("simulação " + nome);
         stage.show();
+    }
+
+    private void ReiniciarSimulacao() {
+        SendJsonAPI sendJsonAPI = new SendJsonAPI();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                URI uricorpos;
+                try {
+                    uricorpos = new URI("http://localhost:3000/corpos/" + simulacao.getId());
+                    sendJsonAPI.sendCorpos(corpos, uricorpos);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                gravidade.stop();
+                colisao.stop();
+                gravidade = null;
+                colisao = null;
+                cena.setRoot(new SmartGroup());
+                corpos.clear();
+                System.err.println("acabou a simulação");
+            }
+        });
+        // Limpa o grupo e adiciona todos os corpos da lista
+        grupo.getChildren().clear();
+        grupo.getChildren().addAll(corpos);
+
+        // Reiniciar as animações
+        colisao.stop();
+        colisao.start();
+        gravidade.stop();
+        gravidade.start();
     }
 
     public SimulacaoController() {
@@ -156,31 +221,94 @@ public class SimulacaoController {
             alert.setHeaderText(null);
             alert.setContentText("Preencha tudo.");
             alert.showAndWait();
-            return;
+        } else {
+            // Aqui ta o problema
+            String nome = tfnome.getText();
+            Double massa = Double.valueOf(tfmassa.getText());
+            int raio = Integer.parseInt(tfraio.getText());
+            String cor = cpcor.getValue().toString();
+
+            // Onde eu crio o novo corpo com as especificações do usuário
+            Corpo corpon = new Corpo(massa, nome, raio, camera.getTranslateX(), camera.getTranslateY(),
+                    camera.getTranslateZ(), 0, 0, 0);
+            corpon.Colorir(cor);
+            corpos.add(corpon);
+            grupo.getChildren().addAll(corpon);
+            System.out.println(grupo.getChildren().contains(corpon));
+
+            Stage stageAtual = (Stage) btnvoltar.getScene().getWindow();
+            stageAtual.close();
+            System.out.println("Corpo criado: " + corpon.getNome());
+            System.out.println("Corpo massa: " + corpon.getMassa());
+            System.out.println("Corpo raio: " + corpon.getRaio());
+            System.out.println("Total de corpos: " + corpos.size());
+
+            ReiniciarSimulacao();
         }
-        // Aqui ta o problema
-        String nome = tfnome.getText();
-        Double massa = Double.valueOf(tfmassa.getText());
-        int raio = Integer.valueOf(tfraio.getText());
-        String cor = cpcor.getValue().toString();
+    }
 
-        // Onde eu crio o novo corpo com as especificações do usuário
-        Corpo corpon = new Corpo(massa, nome, raio, camera.getTranslateX(), camera.getTranslateY(),
-                camera.getTranslateZ(), 0, 0, 0);
+    public void IniciarSimulacaoSalva(Simulacao simulacaoSalva, List<Corpo> corpossalvos) {
+        System.out.println(corpossalvos.size());
+        String corHex = simulacaoSalva.getCor(); 
+        if (corHex.startsWith("0x")) {
+            corHex = "#" + corHex.substring(2);
+        }
+        setBackgroundcolor(Color.web(corHex));
 
-        corpon.Colorir(cor);
+        setSimulacao(simulacaoSalva);
+        grupo = new SmartGroup();
+        corpos.clear();
+        corpos.addAll(corpossalvos);
+        grupo.getChildren().addAll(corpos);
+        setBackgroundcolor(Color.web(simulacaoSalva.getCor()));
+        cena = new Scene(grupo, WIDTH, HEIGHT, true);
+        cena.setFill(backgroundcolor);
+        controller.ControlSimulation(grupo, cena, stage, camera, corpos);
+        stage.setScene(cena);
+        camera.setLayoutX(camera.getLayoutX() * 10);
+        camera.setLayoutY(camera.getLayoutY() * 10);
+        gravidade.start();
+        colisao.start();
+        
+        SendJsonAPI sendJsonAPI = new SendJsonAPI();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                URI uricorpos;
+                try {
+                    uricorpos = new URI("http://localhost:3000/corpos/" + simulacao.getId());
+                    sendJsonAPI.sendCorpos(corpos, uricorpos);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                gravidade.stop();
+                colisao.stop();
+                gravidade = null;
+                colisao = null;
+                cena.setRoot(new SmartGroup());
+                corpos.clear();
+                System.err.println("acabou a simulação");
+            }
+        });
+        cena.setCamera(camera);
 
-        corpos.add(corpon);
-        corpon.setCullFace(CullFace.BACK);
-        grupo.getChildren().add(corpon);
+        camera.setLayoutX(camera.getLayoutX() * 10);
+        camera.setLayoutY(camera.getLayoutY() * 10);
 
-        Stage stageAtual = (Stage) btnvoltar.getScene().getWindow();
-        stageAtual.close();
+        colisao.start();
+        gravidade.start();
+
+        stage.setScene(cena);
+        Image image = new Image("/assets/icon.png");
+        stage.getIcons().add(image);
+        stage.setTitle("simulação " + nome);
+        stage.show();
     }
 
     public void btnvoltarClickAction(ActionEvent event) {
         Stage stageAtual = (Stage) btnvoltar.getScene().getWindow();
         stageAtual.close();
+        ReiniciarSimulacao();
     }
 
     public void Escolhadecor(ActionEvent event) {
@@ -222,16 +350,8 @@ public class SimulacaoController {
         return stage;
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
     public List<Corpo> getCorpos() {
         return corpos;
-    }
-
-    public void setCorpos(List<Corpo> corpos) {
-        this.corpos = corpos;
     }
 
     public double getAnchorX() {
@@ -336,5 +456,61 @@ public class SimulacaoController {
 
     public void setSphere(Sphere sphere) {
         this.sphere = sphere;
+    }
+
+    public static String getFilepath() {
+        return filepath;
+    }
+
+    public static void setFilepath(String filepath) {
+        SimulacaoController.filepath = filepath;
+    }
+
+    public static SmartGroup getGrupo() {
+        return grupo;
+    }
+
+    public static void setGrupo(SmartGroup grupo) {
+        SimulacaoController.grupo = grupo;
+    }
+
+    public SimulacaoTimers getSimulacaoTimers() {
+        return simulacaoTimers;
+    }
+
+    public void setSimulacaoTimers(SimulacaoTimers simulacaoTimers) {
+        this.simulacaoTimers = simulacaoTimers;
+    }
+
+    public AnimationTimer getColisao() {
+        return colisao;
+    }
+
+    public void setColisao(AnimationTimer colisao) {
+        this.colisao = colisao;
+    }
+
+    public AnimationTimer getGravidade() {
+        return gravidade;
+    }
+
+    public void setGravidade(AnimationTimer gravidade) {
+        this.gravidade = gravidade;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public static Simulacao getSimulacao() {
+        return simulacao;
+    }
+
+    public static void setSimulacao(Simulacao simulacao) {
+        SimulacaoController.simulacao = simulacao;
     }
 }

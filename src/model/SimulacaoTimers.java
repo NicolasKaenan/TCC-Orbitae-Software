@@ -25,7 +25,7 @@ public class SimulacaoTimers {
                     iterator.remove();
                     for (Corpo d : corpos2) {
                         corposController.atualizarPosicao(d, c);
-                        System.out.println("Distancia entre " + c.getNome() + " e " + d.getNome() + Distancia(c, d));
+                        System.out.println("Distancia entre " + c.getNome() + " e " + d.getNome() + " "+ Distancia(c, d));
                     }
                 }
             }
@@ -76,6 +76,9 @@ public class SimulacaoTimers {
                             d.SetVelocidadeX(d.GetVelocidadeX() + fator * dx);
                             d.SetVelocidadeY(d.GetVelocidadeY() + fator * dy);
                             d.SetVelocidadeZ(d.GetVelocidadeZ() + fator * dz);
+
+                            c.getRelatorio().somarQuantidadeColisoes();
+                            d.getRelatorio().somarQuantidadeColisoes();
                         }
                     }
                 }

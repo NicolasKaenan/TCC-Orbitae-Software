@@ -1,7 +1,7 @@
 package model;
 
 public class CorposController {
-    public static final double G = 12e-2;
+    public static final double G = 12e-3;
     public void atualizarPosicao(Corpo one, Corpo two) {
         Double forca = (one.getMassa() * two.getMassa()) * G / Distancia(one, two);
         Double aceleracao_one = forca / one.getMassa();
@@ -9,26 +9,38 @@ public class CorposController {
 
         if (one.getTranslateX() < two.getTranslateX()) {
             one.SetVelocidadeX(one.GetVelocidadeX() + aceleracao_one);
+            one.getRelatorio().AddVelocidadeMediaX(one.GetVelocidadeX() + aceleracao_one);
             two.SetVelocidadeX(two.GetVelocidadeX() - aceleracao_two);
+            two.getRelatorio().AddVelocidadeMediaX(two.GetVelocidadeX() - aceleracao_two);
         } else if (one.getTranslateX() > two.getTranslateX()) {
             one.SetVelocidadeX(one.GetVelocidadeX() - aceleracao_one);
+            one.getRelatorio().AddVelocidadeMediaX(one.GetVelocidadeX() - aceleracao_one);
             two.SetVelocidadeX(two.GetVelocidadeX() + aceleracao_two);
+            two.getRelatorio().AddVelocidadeMediaX(two.GetVelocidadeX() + aceleracao_two);
         }
 
         if (one.getTranslateY() < two.getTranslateY()) {
             one.SetVelocidadeY(one.GetVelocidadeY() + aceleracao_one);
+            one.getRelatorio().AddVelocidadeMediaY(one.GetVelocidadeY() + aceleracao_one);
             two.SetVelocidadeY(two.GetVelocidadeY() - aceleracao_two);
+            two.getRelatorio().AddVelocidadeMediaY(two.GetVelocidadeY() - aceleracao_two);
         } else if (one.getTranslateY() > two.getTranslateY()) {
             one.SetVelocidadeY(one.GetVelocidadeY() - aceleracao_one);
+            two.getRelatorio().AddVelocidadeMediaY(one.GetVelocidadeY() - aceleracao_one);
             two.SetVelocidadeY(two.GetVelocidadeY() + aceleracao_two);
+            two.getRelatorio().AddVelocidadeMediaY(two.GetVelocidadeY() + aceleracao_two);
         }
 
         if (one.getTranslateZ() < two.getTranslateZ()) {
             one.SetVelocidadeZ(one.GetVelocidadeZ() + aceleracao_one);
+            one.getRelatorio().AddVelocidadeMediaZ(one.GetVelocidadeZ() + aceleracao_one);
             two.SetVelocidadeZ(two.GetVelocidadeZ() - aceleracao_two);
+            two.getRelatorio().AddVelocidadeMediaZ(two.GetVelocidadeZ() - aceleracao_two);
         } else if (one.getTranslateZ() > two.getTranslateZ()) {
             one.SetVelocidadeZ(one.GetVelocidadeZ() - aceleracao_one);
+            one.getRelatorio().AddVelocidadeMediaZ(one.GetVelocidadeZ() - aceleracao_one);
             two.SetVelocidadeZ(two.GetVelocidadeZ() + aceleracao_two);
+            two.getRelatorio().AddVelocidadeMediaZ(two.GetVelocidadeZ() + aceleracao_two);
         }
 
         one.setTranslateX(one.getTranslateX() + one.GetVelocidadeX());

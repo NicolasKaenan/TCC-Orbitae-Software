@@ -1,19 +1,28 @@
 package model;
 
 public class Simulacao {
-    String cookie_user;
-    String name;
-    String cor;
+    private String cookie_user;
+    private String name;
+    private String cor;
+    private int id;
 
     public Simulacao() {
 
     }
 
+    public Simulacao(String name, String cor, String cookie, int id) {
+        this.name = name;
+        this.cor = cor;
+        cookie_user = cookie;
+        this.id = id;
+    }
+    
     public Simulacao(String name, String cor, String cookie) {
         this.name = name;
         this.cor = cor;
         cookie_user = cookie;
     }
+
 
     public String getName() {
         return name;
@@ -45,6 +54,14 @@ public class Simulacao {
                 + "\"cor\": \"" + cor + "\","
                 + "\"cookie_user\": \"" + cookie_user + "\""
                 + "}";
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 }
