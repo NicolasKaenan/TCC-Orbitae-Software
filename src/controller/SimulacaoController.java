@@ -58,7 +58,7 @@ public class SimulacaoController {
     private AnimationTimer gravidade = simulacaoTimers.createGravidadeTimer();
     private Controller controller = new Controller();
     private static Simulacao simulacao = new Simulacao();
-    private Scene cena = new Scene(grupo, WIDTH, HEIGHT, true);
+    private Scene cena;
 
     @FXML
     Button btnvoltar;
@@ -124,9 +124,9 @@ public class SimulacaoController {
                 camera.getTranslateZ() - 900,
                 0, 0, 0);
 
-        corpo1.Colorir("WHITE");
-        corpo2.Colorir("RED");
-        corpo3.Colorir("BLUE");
+        corpo1.Colorir(Color.valueOf("WHITE"));
+        corpo2.Colorir(Color.valueOf("RED"));
+        corpo3.Colorir(Color.valueOf("BLUE"));
         corpos.add(corpo1);
         corpos.add(corpo2);
         corpos.add(corpo3);
@@ -135,12 +135,14 @@ public class SimulacaoController {
         grupo.translateYProperty().set(HEIGHT / 2);
         grupo.translateZProperty().set(-2000);
 
+        cena = new Scene(grupo, WIDTH, HEIGHT, true);
         cena.setFill(backgroundcolor);
 
         cena.setCamera(camera);
 
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
+        camera.setTranslateZ(camera.getTranslateZ()+740);
 
         controller.ControlSimulation(grupo, cena, stage, camera, corpos);
 
@@ -155,6 +157,7 @@ public class SimulacaoController {
     }
 
     private void ReiniciarSimulacao() {
+        cena = stage.getScene();
         SendJsonAPI sendJsonAPI = new SendJsonAPI();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
@@ -167,15 +170,13 @@ public class SimulacaoController {
                     e.printStackTrace();
                 }
                 gravidade.stop();
-                colisao.stop();
-                gravidade = null;
-                colisao = null;
                 cena.setRoot(new SmartGroup());
+                colisao.stop();
                 corpos.clear();
+                grupo.getChildren().clear();
                 System.err.println("acabou a simulação");
             }
         });
-        // Limpa o grupo e adiciona todos os corpos da lista
         grupo.getChildren().clear();
         grupo.getChildren().addAll(corpos);
 
@@ -222,13 +223,11 @@ public class SimulacaoController {
             alert.setContentText("Preencha tudo.");
             alert.showAndWait();
         } else {
-            // Aqui ta o problema
             String nome = tfnome.getText();
             Double massa = Double.valueOf(tfmassa.getText());
             int raio = Integer.parseInt(tfraio.getText());
-            String cor = cpcor.getValue().toString();
+            Color cor = cpcor.getValue();
 
-            // Onde eu crio o novo corpo com as especificações do usuário
             Corpo corpon = new Corpo(massa, nome, raio, camera.getTranslateX(), camera.getTranslateY(),
                     camera.getTranslateZ(), 0, 0, 0);
             corpon.Colorir(cor);
@@ -254,19 +253,20 @@ public class SimulacaoController {
             corHex = "#" + corHex.substring(2);
         }
         setBackgroundcolor(Color.web(corHex));
-
+        
         setSimulacao(simulacaoSalva);
         grupo = new SmartGroup();
         corpos.clear();
         corpos.addAll(corpossalvos);
         grupo.getChildren().addAll(corpos);
-        setBackgroundcolor(Color.web(simulacaoSalva.getCor()));
         cena = new Scene(grupo, WIDTH, HEIGHT, true);
+        setBackgroundcolor(Color.web(simulacaoSalva.getCor()));
         cena.setFill(backgroundcolor);
         controller.ControlSimulation(grupo, cena, stage, camera, corpos);
         stage.setScene(cena);
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
+        camera.setTranslateZ(camera.getTranslateZ()+740);
         gravidade.start();
         colisao.start();
         
@@ -282,11 +282,10 @@ public class SimulacaoController {
                     e.printStackTrace();
                 }
                 gravidade.stop();
-                colisao.stop();
-                gravidade = null;
-                colisao = null;
                 cena.setRoot(new SmartGroup());
+                colisao.stop();
                 corpos.clear();
+                grupo.getChildren().clear();
                 System.err.println("acabou a simulação");
             }
         });
@@ -476,10 +475,6 @@ public class SimulacaoController {
 
     public SimulacaoTimers getSimulacaoTimers() {
         return simulacaoTimers;
-    }
-
-    public void setSimulacaoTimers(SimulacaoTimers simulacaoTimers) {
-        this.simulacaoTimers = simulacaoTimers;
     }
 
     public AnimationTimer getColisao() {

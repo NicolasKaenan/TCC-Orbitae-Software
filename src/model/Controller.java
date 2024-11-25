@@ -19,25 +19,22 @@ import java.io.IOException;
 import java.util.List;
 
 public class Controller {
-    private final DoubleProperty angleX = new SimpleDoubleProperty(0); // Ângulo de rotação no eixo X
-    private final DoubleProperty angleY = new SimpleDoubleProperty(0); // Ângulo de rotação no eixo Y
-    private double anchorX, anchorY; // Posições iniciais do mouse
-    private double mouseSensitivity = 0.1;  // Sensibilidade do mouse
-    private boolean isMousePressed = false; // Verifica se o mouse está pressionado
+    private final DoubleProperty angleX = new SimpleDoubleProperty(0); 
+    private final DoubleProperty angleY = new SimpleDoubleProperty(0); 
+    private double anchorX, anchorY; 
+    private double mouseSensitivity = 0.1;
+    private boolean isMousePressed = false; 
 
     public Controller() {}
 
     public void ControlSimulation(SmartGroup grupo, Scene cena, Stage stage, Camera camera, List<Corpo> corpos) {
-        // Transformações de rotação para a câmera
         Rotate xRotate = new Rotate(0, Rotate.X_AXIS);
         Rotate yRotate = new Rotate(0, Rotate.Y_AXIS);
         camera.getTransforms().addAll(xRotate, yRotate);
 
-        // Vincula as propriedades de rotação aos eixos
         xRotate.angleProperty().bind(angleX);
         yRotate.angleProperty().bind(angleY);
 
-        // Movimentação do mouse para controle FPS
         cena.setOnMousePressed(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
                 anchorX = event.getSceneX();
@@ -59,17 +56,14 @@ public class Controller {
                 anchorX = event.getSceneX();
                 anchorY = event.getSceneY();
 
-                // Atualiza os ângulos de rotação da câmera com base no movimento do mouse
                 angleY.set(angleY.get() + deltaX * mouseSensitivity);
                 angleX.set(angleX.get() - deltaY * mouseSensitivity);
 
-                // Limita a rotação no eixo X para evitar virar de cabeça para baixo
                 angleX.set(Math.max(-90, Math.min(90, angleX.get())));
             }
         });
 
-        // Movimentação da câmera com teclado
-        double moveSpeed = 20.0;  // Velocidade de movimento
+        double moveSpeed = 50.0; 
         Translate cameraTranslate = new Translate();
         camera.getTransforms().add(cameraTranslate);
 
@@ -95,19 +89,18 @@ public class Controller {
             }
         });
 
-        // Movimentação da câmera com o scroll do mouse
-        double scrollSpeed = 2.0;  // Velocidade do scroll
+        double scrollSpeed = 2.0; 
         cena.addEventHandler(ScrollEvent.SCROLL, event -> {
             double delta = event.getDeltaY();
             double sinY = Math.sin(Math.toRadians(angleY.get()));
             double cosY = Math.cos(Math.toRadians(angleY.get()));
 
-            // Atualiza a posição da câmera para frente ou para trás
+            
             cameraTranslate.setX(cameraTranslate.getX() - sinY * delta * scrollSpeed);
             cameraTranslate.setZ(cameraTranslate.getZ() + cosY * delta * scrollSpeed);
         });
 
-        // Exibindo o diálogo de criação de planeta ao clicar com o botão direito do mouse
+
         cena.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
                 Platform.runLater(() -> {

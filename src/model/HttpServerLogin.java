@@ -61,7 +61,6 @@ public class HttpServerLogin {
         }
     }
 
-    // Método para ler o login de um arquivo
     public String readLoginFromFile(String filePath) {
         HttpServerLogin.filepath = filePath;
         String text = null;

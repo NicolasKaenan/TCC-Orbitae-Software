@@ -1,70 +1,38 @@
 package model;
 
 public class CorposController {
-    public static final double G = 12e-3;
-    public void atualizarPosicao(Corpo one, Corpo two) {
-        Double forca = (one.getMassa() * two.getMassa()) * G / Distancia(one, two);
-        Double aceleracao_one = forca / one.getMassa();
-        Double aceleracao_two = forca / two.getMassa();
+    public static final double G = 120e-2;
+    public void atualizarVelocidades(Corpo one, Corpo two) {
+        double dx = two.getTranslateX() - one.getTranslateX();
+        double dy = two.getTranslateY() - one.getTranslateY();
+        double dz = two.getTranslateZ() - one.getTranslateZ();
+        double distancia = Distancia(one, two);
+    
+        if (distancia < 1e-10) return; 
 
-        if (one.getTranslateX() < two.getTranslateX()) {
-            one.SetVelocidadeX(one.GetVelocidadeX() + aceleracao_one);
-            one.getRelatorio().AddVelocidadeMediaX(one.GetVelocidadeX() + aceleracao_one);
-            two.SetVelocidadeX(two.GetVelocidadeX() - aceleracao_two);
-            two.getRelatorio().AddVelocidadeMediaX(two.GetVelocidadeX() - aceleracao_two);
-        } else if (one.getTranslateX() > two.getTranslateX()) {
-            one.SetVelocidadeX(one.GetVelocidadeX() - aceleracao_one);
-            one.getRelatorio().AddVelocidadeMediaX(one.GetVelocidadeX() - aceleracao_one);
-            two.SetVelocidadeX(two.GetVelocidadeX() + aceleracao_two);
-            two.getRelatorio().AddVelocidadeMediaX(two.GetVelocidadeX() + aceleracao_two);
-        }
-
-        if (one.getTranslateY() < two.getTranslateY()) {
-            one.SetVelocidadeY(one.GetVelocidadeY() + aceleracao_one);
-            one.getRelatorio().AddVelocidadeMediaY(one.GetVelocidadeY() + aceleracao_one);
-            two.SetVelocidadeY(two.GetVelocidadeY() - aceleracao_two);
-            two.getRelatorio().AddVelocidadeMediaY(two.GetVelocidadeY() - aceleracao_two);
-        } else if (one.getTranslateY() > two.getTranslateY()) {
-            one.SetVelocidadeY(one.GetVelocidadeY() - aceleracao_one);
-            two.getRelatorio().AddVelocidadeMediaY(one.GetVelocidadeY() - aceleracao_one);
-            two.SetVelocidadeY(two.GetVelocidadeY() + aceleracao_two);
-            two.getRelatorio().AddVelocidadeMediaY(two.GetVelocidadeY() + aceleracao_two);
-        }
-
-        if (one.getTranslateZ() < two.getTranslateZ()) {
-            one.SetVelocidadeZ(one.GetVelocidadeZ() + aceleracao_one);
-            one.getRelatorio().AddVelocidadeMediaZ(one.GetVelocidadeZ() + aceleracao_one);
-            two.SetVelocidadeZ(two.GetVelocidadeZ() - aceleracao_two);
-            two.getRelatorio().AddVelocidadeMediaZ(two.GetVelocidadeZ() - aceleracao_two);
-        } else if (one.getTranslateZ() > two.getTranslateZ()) {
-            one.SetVelocidadeZ(one.GetVelocidadeZ() - aceleracao_one);
-            one.getRelatorio().AddVelocidadeMediaZ(one.GetVelocidadeZ() - aceleracao_one);
-            two.SetVelocidadeZ(two.GetVelocidadeZ() + aceleracao_two);
-            two.getRelatorio().AddVelocidadeMediaZ(two.GetVelocidadeZ() + aceleracao_two);
-        }
-
-        one.setTranslateX(one.getTranslateX() + one.GetVelocidadeX());
-        one.setTranslateZ(one.getTranslateZ() + one.GetVelocidadeZ());
-        one.setTranslateY(one.getTranslateY() + one.GetVelocidadeY());
-        two.setTranslateX(two.getTranslateX() + two.GetVelocidadeX());
-        two.setTranslateZ(two.getTranslateZ() + two.GetVelocidadeZ());
-        two.setTranslateY(two.getTranslateY() + two.GetVelocidadeY());
-
+        double nx = dx / distancia;
+        double ny = dy / distancia;
+        double nz = dz / distancia;
+    
+        double forca = (one.getMassa() * two.getMassa()) * G / (distancia * distancia);
+    
+        double aceleracao_one = forca / one.getMassa();
+        double aceleracao_two = forca / two.getMassa();
+    
+        one.SetVelocidadeX(one.GetVelocidadeX() + aceleracao_one * nx);
+        one.SetVelocidadeY(one.GetVelocidadeY() + aceleracao_one * ny);
+        one.SetVelocidadeZ(one.GetVelocidadeZ() + aceleracao_one * nz);
+    
+        two.SetVelocidadeX(two.GetVelocidadeX() - aceleracao_two * nx);
+        two.SetVelocidadeY(two.GetVelocidadeY() - aceleracao_two * ny);
+        two.SetVelocidadeZ(two.GetVelocidadeZ() - aceleracao_two * nz);
     }
-
-    private double DistanciaX(Corpo one, Corpo two) {
-        double distancia = one.getTranslateX() - two.getTranslateX();
-        return distancia;
-    }
-
-    private double DistanciaY(Corpo one, Corpo two) {
-        double distancia = one.getTranslateY() - two.getTranslateY();
-        return distancia;
-    }
-
+    
     private double Distancia(Corpo one, Corpo two) {
-        double x = DistanciaX(one, two);
-        double y = DistanciaY(one, two);
-        return Math.sqrt((x * x) + (y * y));
+        double dx = one.getTranslateX() - two.getTranslateX();
+        double dy = one.getTranslateY() - two.getTranslateY();
+        double dz = one.getTranslateZ() - two.getTranslateZ();
+    
+        return Math.sqrt((dx * dx) + (dy * dy) + (dz * dz));
     }
 }
