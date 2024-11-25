@@ -168,16 +168,12 @@ public class UniversosController {
             if (response.statusCode() == 200) {
                 String responseBody = response.body();
 
-                // Verifica se o corpo da resposta é um array JSON
                 if (responseBody.startsWith("[") && responseBody.endsWith("]")) {
-                    // Remove colchetes externos do array JSON
                     responseBody = responseBody.substring(1, responseBody.length() - 1).trim();
 
-                    // Divide objetos JSON no array
                     String[] simulacoesArray = responseBody.split("},\\s*\\{");
 
                     for (int i = 0; i < simulacoesArray.length; i++) {
-                        // Adiciona as chaves que foram removidas na divisão
                         if (!simulacoesArray[i].startsWith("{")) {
                             simulacoesArray[i] = "{" + simulacoesArray[i];
                         }
@@ -185,13 +181,11 @@ public class UniversosController {
                             simulacoesArray[i] = simulacoesArray[i] + "}";
                         }
 
-                        // Extrai valores do JSON
                         String cor = extrairValor(simulacoesArray[i], "cor");
                         System.out.println("cor é:" + cor);
                         String nome = extrairValor(simulacoesArray[i], "nome");
                         String id_simulacao = extrairValor(simulacoesArray[i], "id");
 
-                        // Tratamento para garantir que o ID seja válido
                         int idSimulacao = 0;
                         try {
                             if (id_simulacao != null && !id_simulacao.isEmpty()) {
@@ -201,7 +195,6 @@ public class UniversosController {
                             System.out.println("Erro ao converter ID da simulação: " + id_simulacao);
                         }
 
-                        // Criação do objeto Simulacao
                         Simulacao simulacao = new Simulacao(nome, cor, cookie, idSimulacao);
                         System.out.println(simulacao.getName());
                         System.out.println(simulacao.getCor());
@@ -225,40 +218,35 @@ public class UniversosController {
         int startIndex = json.indexOf(chaveComAspas);
 
         if (startIndex == -1) {
-            return null; // Chave não encontrada
+            return null; 
         }
 
-        startIndex = json.indexOf(":", startIndex) + 1; // Move para o início do valor
+        startIndex = json.indexOf(":", startIndex) + 1; 
         if (startIndex == 0) {
-            return null; // Não encontrou ":" após a chave
+            return null; 
         }
 
         char startChar = json.charAt(startIndex);
 
         int endIndex;
         if (startChar == '"') {
-            // Valor entre aspas (string)
-            startIndex++; // Pula a primeira aspa
-            endIndex = json.indexOf("\"", startIndex); // Procura o fechamento da string
+            startIndex++;
+            endIndex = json.indexOf("\"", startIndex); 
         } else if (startChar == '{') {
-            // Valor é um objeto (não implementado no uso atual, mas necessário para
-            // expansões futuras)
             endIndex = json.indexOf("}", startIndex) + 1;
         } else {
-            // Valor numérico, booleano ou null
-            endIndex = json.indexOf(",", startIndex); // Encontra a próxima vírgula
+            endIndex = json.indexOf(",", startIndex); 
             if (endIndex == -1) {
-                endIndex = json.indexOf("}", startIndex); // Final do objeto
+                endIndex = json.indexOf("}", startIndex); 
             }
         }
 
         if (endIndex == -1) {
-            return null; // Erro: não encontrou o fim do valor
+            return null; 
         }
 
         String valor = json.substring(startIndex, endIndex).trim();
 
-        // Remove as aspas em torno dos valores string, caso existam
         if (valor.startsWith("\"") && valor.endsWith("\"")) {
             valor = valor.substring(1, valor.length() - 1);
         }

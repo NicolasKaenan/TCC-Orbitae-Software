@@ -66,16 +66,16 @@ public class SendJsonAPI {
 
     public List<Corpo> GetCorposList(String urlString) {
         List<Corpo> corposList = new ArrayList<>();
-
+    
         try {
             URI uri = new URI(urlString);
             HttpURLConnection conn = (HttpURLConnection) (uri.toURL()).openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
-
+    
             int status = conn.getResponseCode();
             System.out.println("Código de status da resposta: " + status);
-
+    
             if (status >= 200 && status < 300) {
                 try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
                     StringBuilder response = new StringBuilder();
@@ -83,35 +83,40 @@ public class SendJsonAPI {
                     while ((line = br.readLine()) != null) {
                         response.append(line.trim());
                     }
-
+    
                     String responseBody = response.toString();
                     System.out.println("Resposta da API: " + responseBody);
-
+    
                     String[] jsonObjects = responseBody.substring(1, responseBody.length() - 1).split("\\},\\{");
                     for (String jsonObject : jsonObjects) {
                         String sanitizedJson = jsonObject.replaceAll("[\\[\\]{}\"]", "");
                         String[] properties = sanitizedJson.split(",");
-
+    
                         Corpo corpo = new Corpo();
+                        Relatorio relatorio = new Relatorio();
+    
                         for (String property : properties) {
                             String[] keyValue = property.split(":");
+                            if (keyValue.length < 2) continue;
                             String key = keyValue[0].trim();
                             String value = keyValue[1].trim();
-
+    
                             switch (key) {
                                 case "id":
                                     corpo.setId(Integer.parseInt(value));
+                                    relatorio.setIdCorpo(Integer.parseInt(value));
                                     break;
                                 case "nome":
                                     corpo.setNome(value);
-                                    break;
-                                case "id_simulacao":
+                                    relatorio.setNomeCorpo(value);
                                     break;
                                 case "massa":
                                     corpo.setMassa(Double.parseDouble(value));
+                                    relatorio.setMassa(Double.parseDouble(value));
                                     break;
-                                case "cor":
-                                    corpo.ColorirCorSalva(value);
+                                case "raio":
+                                    corpo.setRaio(Double.parseDouble(value));
+                                    relatorio.setRaio(Double.parseDouble(value));
                                     break;
                                 case "position_x":
                                     corpo.setX(Double.parseDouble(value));
@@ -123,36 +128,65 @@ public class SendJsonAPI {
                                     corpo.setZ(Double.parseDouble(value));
                                     break;
                                 case "velocidade_x":
-                                    corpo.SetVelocidadeX(Double.parseDouble(value));
+                                    corpo.setVelocidadeX(Double.parseDouble(value));
+                                    relatorio.setVelocidadeMediaX(Double.parseDouble(value));
                                     break;
                                 case "velocidade_y":
-                                    corpo.SetVelocidadeY(Double.parseDouble(value));
+                                    corpo.setVelocidadeY(Double.parseDouble(value));
+                                    relatorio.setVelocidadeMediaY(Double.parseDouble(value));
                                     break;
                                 case "velocidade_z":
-                                    corpo.SetVelocidadeZ(Double.parseDouble(value));
+                                    corpo.setVelocidadeZ(Double.parseDouble(value));
+                                    relatorio.setVelocidadeMediaZ(Double.parseDouble(value));
+                                    break;
+                                case "cor":
+                                    corpo.ColorirCorSalva(value);
+                                    relatorio.setCor(value);
                                     break;
                             }
+    
+                            if (key.startsWith("relatorio")) {
+                                String relKey = key.replace("relatorio.", "");
+                                switch (relKey) {
+                                    case "id":
+                                        relatorio.setId(Integer.parseInt(value));
+                                        break;
+                                    case "quantidadeColisoes":
+                                        relatorio.setQuantidadeColisoes(Integer.parseInt(value));
+                                        break;
+                                    case "densidade":
+                                        relatorio.setDensidade(Double.parseDouble(value));
+                                        break;
+                                    case "volume":
+                                        relatorio.setVolume(Double.parseDouble(value));
+                                        break;
+                                }
+                            }
                         }
+                        corpo.setRelatorio(relatorio);
                         corposList.add(corpo);
                     }
                 }
             } else {
                 System.out.println("Erro ao obter corpos da API. Status: " + status);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+    
         return corposList;
     }
+    
 
     public void sendCorpos(List<Corpo> corpos, URI uri) {
         try {
             StringBuilder jsonBuilder = new StringBuilder();
             jsonBuilder.append("[");
+    
             for (int i = 0; i < corpos.size(); i++) {
                 Corpo corpo = corpos.get(i);
+                Relatorio relatorio = corpo.getRelatorio();
+    
                 jsonBuilder.append("{")
                         .append("\"id\":").append(corpo.GetId()).append(",")
                         .append("\"massa\":").append(corpo.getMassa()).append(",")
@@ -164,31 +198,48 @@ public class SendJsonAPI {
                         .append("\"velocidade_x\":").append(corpo.GetVelocidadeX()).append(",")
                         .append("\"velocidade_y\":").append(corpo.GetVelocidadeY()).append(",")
                         .append("\"velocidade_z\":").append(corpo.GetVelocidadeZ()).append(",")
-                        .append("\"cor\":\"").append(corpo.getCor()).append("\"")
+                        .append("\"cor\":\"").append(corpo.getCor()).append("\",")
+    
+                        .append("\"relatorio\":{")
+                        .append("\"id\":").append(relatorio.getId()).append(",")
+                        .append("\"idCorpo\":").append(relatorio.getIdCorpo()).append(",")
+                        .append("\"nomeCorpo\":\"").append(relatorio.getNomeCorpo()).append("\",")
+                        .append("\"massa\":").append(relatorio.getMassa()).append(",")
+                        .append("\"densidade\":").append(relatorio.getDensidade()).append(",")
+                        .append("\"volume\":").append(relatorio.getVolume()).append(",")
+                        .append("\"raio\":").append(relatorio.getRaio()).append(",")
+                        .append("\"quantidadeColisoes\":").append(relatorio.getQuantidadeColisoes()).append(",")
+                        .append("\"velocidadeMediaX\":").append(relatorio.getVelocidadeMediaX()).append(",")
+                        .append("\"velocidadeMediaY\":").append(relatorio.getVelocidadeMediaY()).append(",")
+                        .append("\"velocidadeMediaZ\":").append(relatorio.getVelocidadeMediaZ()).append(",")
+                        .append("\"cor\":\"").append(relatorio.getCor()).append("\"")
+                        .append("}")
                         .append("}");
-
+    
                 if (i < corpos.size() - 1) {
                     jsonBuilder.append(",");
                 }
             }
             jsonBuilder.append("]");
+            
             String jsonString = jsonBuilder.toString();
-            System.out.println(jsonString);
+            System.out.println("JSON enviado: " + jsonString);
+    
             URL url = uri.toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("PUT");
             conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
-
+    
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonString.getBytes("UTF-8");
                 os.write(input, 0, input.length);
             }
-
+    
             int status = conn.getResponseCode();
             System.out.println("Código de status da resposta: " + status);
-
+    
             InputStream inputStream = (status >= 400) ? conn.getErrorStream() : conn.getInputStream();
             try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"))) {
                 StringBuilder response = new StringBuilder();
@@ -198,10 +249,10 @@ public class SendJsonAPI {
                 }
                 System.out.println("Resposta da API: " + response.toString());
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    
 }

@@ -13,6 +13,7 @@ import javax.sound.sampled.FloatControl;
 
 public class WavPlayer {
     private Clip clip = null;
+    public static FloatControl gainControl;
 
     public WavPlayer() {
 
@@ -20,7 +21,6 @@ public class WavPlayer {
 
     public void playWavFile(String filePath, float volume) {
         try {
-            // Carrega o arquivo de música como um InputStream
         InputStream in = getClass().getResourceAsStream(filePath);
         
         if (in == null) {
@@ -28,7 +28,6 @@ public class WavPlayer {
             return;
         }
 
-        // Copia o InputStream para um ByteArrayInputStream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int bytesRead;
@@ -37,18 +36,15 @@ public class WavPlayer {
         }
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 
-        // Usa o ByteArrayInputStream para criar o AudioInputStream
         AudioInputStream audioStream = AudioSystem.getAudioInputStream(byteArrayInputStream);
         Clip clip = AudioSystem.getClip();
         clip.open(audioStream);
 
-        // Ajusta o volume
-        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         float final_volume = (volume * (gainControl.getMaximum() - gainControl.getMinimum()) / 100f) + gainControl.getMinimum();
         gainControl.setValue(final_volume);
 
-        // Reproduz o áudio
-        clip.loop(Clip.LOOP_CONTINUOUSLY); // Reproduzir indefinidamente
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
         clip.start();
         } catch (IOException e) {
             System.err.println("Erro ao abrir o arquivo de áudio: " + e.getMessage());
@@ -56,6 +52,19 @@ public class WavPlayer {
             e.printStackTrace();
         }
     }
+
+    public void VolumeAtual(float volume) {
+        float minGain = gainControl.getMinimum();
+        float maxGain = gainControl.getMaximum();
+        float range = maxGain - minGain;
+    
+        volume = Math.max(0, Math.min(volume, 100)); 
+        float adjustedVolume = (volume / 100f) * range + minGain;
+    
+        gainControl.setValue(adjustedVolume);
+    }
+    
+    
 
     public float readVolumeFromFile(String filePath) {
         float text = 0.0f;

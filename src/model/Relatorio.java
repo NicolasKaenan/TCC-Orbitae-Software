@@ -1,7 +1,7 @@
 package model;
 
 public class Relatorio {
-    private int idRelatorio;
+    private int id;
     private int idCorpo;
     private String nomeCorpo;
     private double massa;
@@ -31,16 +31,17 @@ public class Relatorio {
         this.velocidadeMediaZ = corpo.getVelocidadeZ();
         this.cor = corpo.getCor();
         this.quantidadeColisoes = 0; 
+        this.id = -1;
     }
 
 
 
-    public int getIdRelatorio() {
-        return idRelatorio;
+    public int getId() {
+        return id;
     }
 
-    public void setIdRelatorio(int idRelatorio) {
-        this.idRelatorio = idRelatorio;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getIdCorpo() {
@@ -135,25 +136,35 @@ public class Relatorio {
         this.cor = cor;
     }
 
-    public void AddVelocidadeMediaX(double velociade_x){
-        velocidadeMediaX = (velocidadeMediaX*x_contador)+velociade_x/(double)(x_contador+1);
+    public void AddVelocidadeMediaX(double velocidade_x) {
+        if (Double.isInfinite(velocidade_x) || Double.isNaN(velocidade_x)) {
+            return;
+        }
+        velocidadeMediaX = ((velocidadeMediaX * x_contador) + Math.abs(velocidade_x)) / (x_contador + 1);
         x_contador++;
     }
-
-    public void AddVelocidadeMediaY(double velociade_Y){
-        velocidadeMediaY = (velocidadeMediaY*y_contador)+velociade_Y/(double)(y_contador+1);
+    
+    public void AddVelocidadeMediaY(double velocidade_y) {
+        if (Double.isInfinite(velocidade_y) || Double.isNaN(velocidade_y)) {
+            return;
+        }
+        velocidadeMediaY = ((velocidadeMediaY * y_contador) + Math.abs(velocidade_y)) / (y_contador + 1);
         y_contador++;
     }
-
-    public void AddVelocidadeMediaZ(double velociade_Z){
-        velocidadeMediaZ = (velocidadeMediaZ*z_contador)+velociade_Z/(double)(z_contador+1);
+    
+    public void AddVelocidadeMediaZ(double velocidade_z) {
+        if (Double.isInfinite(velocidade_z) || Double.isNaN(velocidade_z)) {
+            return;
+        }
+        velocidadeMediaZ = ((velocidadeMediaZ * z_contador) + Math.abs(velocidade_z)) / (z_contador + 1);
         z_contador++;
     }
+    
 
     @Override
     public String toString() {
         return "Relatorio{" +
-                "idRelatorio=" + idRelatorio +
+                "idRelatorio=" + id +
                 ", idCorpo=" + idCorpo +
                 ", nomeCorpo='" + nomeCorpo + '\'' +
                 ", massa=" + massa +

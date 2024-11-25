@@ -93,17 +93,16 @@ public class TelainicialController {
 
     public void btnconfiguracoesClickAction(ActionEvent event) {
         try {
-            @SuppressWarnings("unused")
-
-            ConfiguracoesController configuracoescontroller = new ConfiguracoesController(stage);
             // Carrega o novo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/configuracoes.fxml"));
             Parent root = loader.load();
+            ConfiguracoesController configuracoesController = loader.getController();
+
+            configuracoesController.iniciarVolume();
 
             stage.setTitle("configuracoes");
             stage.setScene(new Scene(root));
             stage.show();
-            // configuracoescontroller.iniciarVolume();
             @SuppressWarnings("unused")
             Stage stagePrincipal = (Stage) btnuniversos.getScene().getWindow();
 

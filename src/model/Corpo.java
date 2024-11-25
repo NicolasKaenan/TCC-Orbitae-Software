@@ -121,18 +121,18 @@ public class Corpo extends Sphere {
 
     }
 
-    public void Colorir(String cor) {
-        PhongMaterial material = new PhongMaterial();
+    public void Colorir(Color cor) {
         if (cor == null) {
             material.setDiffuseColor(Color.WHITE);
             this.cor = Color.WHITE.toString();
         } else {
-            material.setDiffuseColor(Color.valueOf(cor));
-            this.cor = Color.valueOf(cor).toString();
+            material.setDiffuseColor(cor);
+            this.cor = cor.toString(); 
         }
         this.setMaterial(material);
     }
-
+    
+    
     public void ColorirCorSalva(String corSalva) {
         try {
             System.out.println(corSalva);

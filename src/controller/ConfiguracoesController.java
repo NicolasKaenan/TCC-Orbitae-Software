@@ -9,9 +9,12 @@ import javafx.scene.control.Slider;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import model.HttpServerLogin;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,22 +28,28 @@ public class ConfiguracoesController {
     @FXML
     private Button btnvoltar;
 
-
     private Stage arg08;
 
     public ConfiguracoesController() {
 
     }
 
-    public void iniciarVolume(){
-        InputStream in = getClass().getResourceAsStream("/controller/volume.txt");
-        BufferedReader input = new BufferedReader(new InputStreamReader(in));
+    public void iniciarVolume() {
+        String caminhoatual = System.getProperty("user.dir");
+        String filevolume = caminhoatual + File.separator + "config" + File.separator + "volume.txt";
+        sldvolume.setValue(Double.valueOf(Float.parseFloat(readTextFromFile(filevolume))));      
+    }
 
-        try {
-            sldvolume.setValue(Double.valueOf(input.readLine()));
-        } catch (NumberFormatException | IOException e) {
+    public String readTextFromFile(String filePath) {
+        String text = null;
+
+        try (BufferedReader leitorFiler = new BufferedReader(new FileReader(filePath))) {
+            text = leitorFiler.readLine();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return text;
     }
 
     public ConfiguracoesController(Stage stage) {
@@ -48,28 +57,29 @@ public class ConfiguracoesController {
         arg08.setResizable(false);
     }
 
-    public void btnsalvarClickAction(ActionEvent event){
-        // float volume = (float) (sldvolume.getValue());
-
-        // InputStream in = getClass().getResourceAsStream("/controller/volume.txt");
-        // // Tente criar o BufferedWriter e escrever no arquivo
-        // try (BufferedWriter writer = new BufferedWriter(in)) {
-        //     // Escreva uma linha de texto no arquivo
-        //     writer.write("Este é um exemplo de escrita com BufferedWriter.");
-        //     writer.newLine(); // Adiciona uma nova linha
-        //     writer.write("Aqui está outra linha de texto.");
-        // } catch (IOException e) {
-        //     e.printStackTrace(); // Tratamento de exceção em caso de erro
-        // }
+    public void btnsalvarClickAction(ActionEvent event) {
+        String caminhoatual = System.getProperty("user.dir");
+        String filevolume = caminhoatual + File.separator + "config" + File.separator + "volume.txt";
+        float volume = (float) (sldvolume.getValue());
+        WriteTextFromFile(String.valueOf(volume), filevolume);
+        WavPlayer wavPlayer = new WavPlayer();
+        wavPlayer.VolumeAtual(volume);
     }
 
-    public void btnvoltarClickAction(ActionEvent event){
-        Stage stageprimario = (Stage)btnvoltar.getScene().getWindow();
+    public static void WriteTextFromFile(String text, String filePath){
+        try(FileWriter escrever = new FileWriter(filePath)){
+            escrever.write(text);
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void btnvoltarClickAction(ActionEvent event) {
+        Stage stageprimario = (Stage) btnvoltar.getScene().getWindow();
         Window owner = stageprimario.getOwner();
 
         stageprimario.close();
 
     }
-
 
 }

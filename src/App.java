@@ -35,15 +35,15 @@ public class App extends Application {
             System.out.println(filelogin);
 
             if (login != null) {
-                iniciarInterfacePrincipal(stage); // Se o login for válido, inicia a interface principal
+                iniciarInterfacePrincipal(stage); 
             } else {
                 // Inicia o servidor e aguarda a resposta
                 server.start();
                 System.out.println("Servidor rodando na porta 8080...");
 
-                latch.await(); // Aguarda até que o latch seja liberado
+                latch.await(); 
                 server.stop(0);
-                iniciarInterfacePrincipal(stage); // Após a resposta, inicia a interface principal
+                iniciarInterfacePrincipal(stage); 
             }
 
         } catch (IOException | InterruptedException e) {
