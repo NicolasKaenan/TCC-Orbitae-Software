@@ -124,9 +124,9 @@ public class SimulacaoController {
                 camera.getTranslateZ() - 900,
                 0, 0, 0);
 
-        corpo1.Colorir(Color.valueOf("WHITE"));
-        corpo2.Colorir(Color.valueOf("RED"));
-        corpo3.Colorir(Color.valueOf("BLUE"));
+        corpo1.Colorir(Color.YELLOW.toString());
+        corpo2.Colorir(Color.BROWN.toString());
+        corpo3.Colorir(Color.GREEN.toString());
         corpos.add(corpo1);
         corpos.add(corpo2);
         corpos.add(corpo3);
@@ -142,7 +142,7 @@ public class SimulacaoController {
 
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
-        camera.setTranslateZ(camera.getTranslateZ()+740);
+        camera.setTranslateZ(camera.getTranslateZ() + 740);
 
         controller.ControlSimulation(grupo, cena, stage, camera, corpos);
 
@@ -226,7 +226,7 @@ public class SimulacaoController {
             String nome = tfnome.getText();
             Double massa = Double.valueOf(tfmassa.getText());
             int raio = Integer.parseInt(tfraio.getText());
-            Color cor = cpcor.getValue();
+            String cor = cpcor.getValue().toString();
 
             Corpo corpon = new Corpo(massa, nome, raio, camera.getTranslateX(), camera.getTranslateY(),
                     camera.getTranslateZ(), 0, 0, 0);
@@ -248,12 +248,12 @@ public class SimulacaoController {
 
     public void IniciarSimulacaoSalva(Simulacao simulacaoSalva, List<Corpo> corpossalvos) {
         System.out.println(corpossalvos.size());
-        String corHex = simulacaoSalva.getCor(); 
+        String corHex = simulacaoSalva.getCor();
         if (corHex.startsWith("0x")) {
             corHex = "#" + corHex.substring(2);
         }
         setBackgroundcolor(Color.web(corHex));
-        
+
         setSimulacao(simulacaoSalva);
         grupo = new SmartGroup();
         corpos.clear();
@@ -266,10 +266,10 @@ public class SimulacaoController {
         stage.setScene(cena);
         camera.setLayoutX(camera.getLayoutX() * 10);
         camera.setLayoutY(camera.getLayoutY() * 10);
-        camera.setTranslateZ(camera.getTranslateZ()+740);
+        camera.setTranslateZ(camera.getTranslateZ() + 740);
         gravidade.start();
         colisao.start();
-        
+
         SendJsonAPI sendJsonAPI = new SendJsonAPI();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
