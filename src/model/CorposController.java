@@ -22,10 +22,18 @@ public class CorposController {
         one.SetVelocidadeX(one.GetVelocidadeX() + aceleracao_one * nx);
         one.SetVelocidadeY(one.GetVelocidadeY() + aceleracao_one * ny);
         one.SetVelocidadeZ(one.GetVelocidadeZ() + aceleracao_one * nz);
-    
+
+        one.getRelatorio().AddVelocidadeMediaX(one.GetVelocidadeX() + aceleracao_one * nx);
+        one.getRelatorio().AddVelocidadeMediaY(one.GetVelocidadeY() + aceleracao_one * ny);
+        one.getRelatorio().AddVelocidadeMediaZ(one.GetVelocidadeZ() + aceleracao_one * nz);
+        
         two.SetVelocidadeX(two.GetVelocidadeX() - aceleracao_two * nx);
         two.SetVelocidadeY(two.GetVelocidadeY() - aceleracao_two * ny);
         two.SetVelocidadeZ(two.GetVelocidadeZ() - aceleracao_two * nz);
+
+        two.getRelatorio().AddVelocidadeMediaX(two.GetVelocidadeX() + aceleracao_two * nx);
+        two.getRelatorio().AddVelocidadeMediaY(two.GetVelocidadeY() + aceleracao_two * ny);
+        two.getRelatorio().AddVelocidadeMediaZ(two.GetVelocidadeZ() + aceleracao_two * nz);
     }
     
     private double Distancia(Corpo one, Corpo two) {

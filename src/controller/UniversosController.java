@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -15,7 +14,6 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -29,6 +27,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Corpo;
@@ -103,13 +102,22 @@ public class UniversosController {
             flow.setOrientation(Orientation.HORIZONTAL);
             flow.setPrefWrapLength(125);
             flow.setAlignment(Pos.CENTER);
-            flow.setStyle("-fx-border-color: white; -fx-border-width: 2px; -fx-border-radius: 30px;");
-
-            flow.setBackground(Background.fill(Color.WHITE));
+            flow.setStyle(
+                    "-fx-border-color: white;" +
+                    "-fx-text-fill: black;"+
+                    "-fx-text-alignment: center;"+
+                            "-fx-border-width: 3px;" +
+                            "-fx-border-radius: 20px;" +
+                            "-fx-background-color: black;" +
+                            "-fx-background-radius: 20px;" +
+                            "-fx-padding: 10px;" +
+                            "-fx-min-height: 150px;" +
+                            "-fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.2), 8, 0.3, 0, 2);");
 
             Label nomeSimulacao = new Label(simulacao.getName());
 
-            nomeSimulacao.setTextFill(Color.BLACK);
+            nomeSimulacao.setTextFill(Color.WHITE);
+            nomeSimulacao.setTextAlignment(TextAlignment.CENTER);
 
             nomeSimulacao.setFont(new Font("Arial", 18));
 
@@ -119,6 +127,17 @@ public class UniversosController {
             Button botaoIniciar = new Button("Iniciar");
 
             botaoIniciar.setFont(new Font("Arial", 18));
+
+            botaoIniciar.setStyle(
+                    "-fx-background-color: white;" +
+                            "-fx-text-fill: black;" +
+                            "-fx-font-size: 14px;" +
+                            "-fx-font-family: 'Arial Black', sans-serif;" +
+                            "-fx-padding: 5px 10px;" +
+                            "-fx-border-radius: 5px;" +
+                            "-fx-background-radius: 5px;" +
+                            "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 6, 0.1, 0, 2);" +
+                            "-fx-cursor: hand;");
 
             botaoIniciar.setMaxWidth(125);
             botaoIniciar.setPrefWidth(125);
@@ -218,12 +237,12 @@ public class UniversosController {
         int startIndex = json.indexOf(chaveComAspas);
 
         if (startIndex == -1) {
-            return null; 
+            return null;
         }
 
-        startIndex = json.indexOf(":", startIndex) + 1; 
+        startIndex = json.indexOf(":", startIndex) + 1;
         if (startIndex == 0) {
-            return null; 
+            return null;
         }
 
         char startChar = json.charAt(startIndex);
@@ -231,18 +250,18 @@ public class UniversosController {
         int endIndex;
         if (startChar == '"') {
             startIndex++;
-            endIndex = json.indexOf("\"", startIndex); 
+            endIndex = json.indexOf("\"", startIndex);
         } else if (startChar == '{') {
             endIndex = json.indexOf("}", startIndex) + 1;
         } else {
-            endIndex = json.indexOf(",", startIndex); 
+            endIndex = json.indexOf(",", startIndex);
             if (endIndex == -1) {
-                endIndex = json.indexOf("}", startIndex); 
+                endIndex = json.indexOf("}", startIndex);
             }
         }
 
         if (endIndex == -1) {
-            return null; 
+            return null;
         }
 
         String valor = json.substring(startIndex, endIndex).trim();
