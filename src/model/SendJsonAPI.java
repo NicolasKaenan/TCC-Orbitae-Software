@@ -187,7 +187,7 @@ public class SendJsonAPI {
                                 corpo.GetVelocidadeZ());
                         corponovo.setRelatorio(relatorio);
                         corponovo.Colorir(corpo.getCor());
-                        corponovo.setId(corpo.getId());
+                        corponovo.setId(corpo.GetId());
                         corposList.add(corponovo);
                     }
                 }
