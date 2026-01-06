@@ -35,7 +35,7 @@
 >  ```
 >  java --module-path endereco\da\biblioteca\javafx\javafx-sdk-21.0.2\lib --add-modules javafx.controls,javafx.fxml -jar TCC-Orbitae.jar
 >  ```
->  O software tem uma API RESTful para salvar o cookie retornado do login, por enquanto o [site](https://github.com/NicolasKaenan/TCC-Orbitae-Site) não foi finalizado, então para testar primeiro envie essa requisição HTTP.
+>  O software tem uma API RESTful para salvar o cookie retornado do login, [site](https://github.com/NicolasKaenan/TCC-Orbitae-Site), então para testar primeiro envie essa requisição HTTP.
 > ```
 >  http://localhost:8080/auth/retorno-login?nomealeatorio
 > ```
